@@ -3,11 +3,14 @@ import type { Job, JobFilters, CandidateProfile, EmployerProfile, JobApplication
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '/api/v1' : 'http://localhost:8080/api/v1'),
+  baseURL: import.meta.env.VITE_API_BASE_URL ||
+           import.meta.env.VITE_API_URL ||
+           (import.meta.env.DEV ? '/api/v1' : 'https://your-backend-url.com/api/v1'),
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: false, // Set to true if you need cookies/auth
 });
 
 // Request interceptor to add auth token
@@ -28,6 +31,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle CORS errors
+    if (!error.response && error.code === 'ERR_NETWORK') {
+      console.error('CORS or Network Error:', error.message);
+      // You can show a user-friendly message here
+      return Promise.reject({
+        ...error,
+        message: 'Unable to connect to server. Please check if the backend is running.',
+        isCorsError: true
+      });
+    }
+
     if (error.response?.status === 401) {
       // Handle unauthorized access
       localStorage.removeItem('authToken');

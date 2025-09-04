@@ -22,6 +22,16 @@ export class AppError extends Error {
 }
 
 export const handleApiError = (error: unknown): ApiError => {
+  // Handle CORS/Network errors first
+  if (error instanceof AxiosError && !error.response && error.code === 'ERR_NETWORK') {
+    return {
+      message: 'Unable to connect to server. Please check if the backend is running.',
+      code: 'CORS_ERROR',
+      status: 0,
+      details: { isCorsError: true }
+    };
+  }
+
   if (error instanceof AxiosError) {
     const status = error.response?.status;
     const data = error.response?.data;
