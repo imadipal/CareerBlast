@@ -8,7 +8,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { HomePage } from './pages/HomePage';
 import { JobsPage } from './pages/JobsPage';
 import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
+// import { SignupPage } from './pages/SignupPage'; // Using EnhancedSignupPage instead
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { CandidateProfilePage } from './pages/CandidateProfilePage';
 import { EmployerDashboardPage } from './pages/EmployerDashboardPage';

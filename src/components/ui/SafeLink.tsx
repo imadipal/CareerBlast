@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, type LinkProps } from 'react-router-dom';
 
 interface SafeLinkProps extends LinkProps {
   throttleDelay?: number;

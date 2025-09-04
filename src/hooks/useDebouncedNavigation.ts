@@ -10,12 +10,12 @@ export const useDebouncedNavigation = (delay: number = 300) => {
   const lastNavigationRef = useRef<string>('');
   const lastNavigationTimeRef = useRef<number>(0);
 
-  const safeNavigate = useCallback((to: string | number, options?: any) => {
+  const safeNavigate = useCallback((to: string, options?: any) => {
     const now = Date.now();
     const timeSinceLastNav = now - lastNavigationTimeRef.current;
 
     // If it's the same path and within delay, ignore
-    if (typeof to === 'string' && to === lastNavigationRef.current && timeSinceLastNav < delay) {
+    if (to === lastNavigationRef.current && timeSinceLastNav < delay) {
       if (process.env.NODE_ENV === 'development') {
         console.warn('[Navigation] Duplicate navigation prevented:', to);
       }
@@ -31,9 +31,7 @@ export const useDebouncedNavigation = (delay: number = 300) => {
     }
 
     // Update tracking
-    if (typeof to === 'string') {
-      lastNavigationRef.current = to;
-    }
+    lastNavigationRef.current = to;
     lastNavigationTimeRef.current = now;
 
     // Perform navigation
