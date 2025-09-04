@@ -50,8 +50,9 @@ export const usePerformanceMonitor = (componentName: string) => {
 
 /**
  * Hook to detect and prevent rapid successive function calls
+ * Reduced delay for better UX while still preventing spam
  */
-export const useClickProtection = (delay: number = 1000) => {
+export const useClickProtection = (delay: number = 200) => {
   const lastClickTime = useRef<number>(0);
 
   const isClickAllowed = (): boolean => {

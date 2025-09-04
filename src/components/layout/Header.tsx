@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings, Sparkles, Plus, Users } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
+import { SafeLink } from '../ui/SafeLink';
 import { useAuth } from '../../hooks/useAuth';
 import { useClickProtection } from '../../hooks/usePerformanceMonitor';
 
@@ -11,7 +12,7 @@ export const Header: React.FC = React.memo(() => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
-  const isClickAllowed = useClickProtection(500); // 500ms protection
+  const isClickAllowed = useClickProtection(200); // 200ms protection
 
   const isActive = useCallback((path: string) => location.pathname === path, [location.pathname]);
 
@@ -93,9 +94,10 @@ export const Header: React.FC = React.memo(() => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
-              <Link
+              <SafeLink
                 key={item.href}
                 to={item.href}
+                throttleDelay={200}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive(item.href)
                     ? 'text-brand-600 bg-white/60 shadow-soft'
@@ -104,7 +106,7 @@ export const Header: React.FC = React.memo(() => {
               >
                 {'icon' in item && item.icon && <item.icon className="w-4 h-4" />}
                 <span>{item.label}</span>
-              </Link>
+              </SafeLink>
             ))}
           </nav>
 
@@ -198,9 +200,10 @@ export const Header: React.FC = React.memo(() => {
           <div className="md:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                <Link
+                <SafeLink
                   key={item.href}
                   to={item.href}
+                  throttleDelay={200}
                   className={`flex items-center space-x-2 text-sm font-medium transition-colors ${
                     isActive(item.href)
                       ? 'text-brand-600'
@@ -210,7 +213,7 @@ export const Header: React.FC = React.memo(() => {
                 >
                   {'icon' in item && item.icon && <item.icon className="w-4 h-4" />}
                   <span>{item.label}</span>
-                </Link>
+                </SafeLink>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                 {isAuthenticated ? (
