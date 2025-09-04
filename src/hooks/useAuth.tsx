@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User, AuthState } from '../types/index';
 import { authAPI } from '../services/api';
+import { secureLog } from '../utils/secureLogging';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
@@ -48,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           });
         }
       } catch (error) {
-        console.error('Error checking auth state:', error);
+        secureLog.error('Error checking auth state', error);
         setAuthState({
           user: null,
           token: null,

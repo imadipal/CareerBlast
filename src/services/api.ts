@@ -30,10 +30,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle CORS errors
+    // Handle CORS errors - SECURE LOGGING
     if (!error.response && error.code === 'ERR_NETWORK') {
-      console.error('CORS or Network Error:', error.message);
-      // You can show a user-friendly message here
+      // Only log detailed errors in development
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Network Error:', error.message);
+      }
+
       return Promise.reject({
         ...error,
         message: 'Unable to connect to server. Please check if the backend is running.',

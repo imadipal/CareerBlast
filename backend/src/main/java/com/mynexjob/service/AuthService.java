@@ -37,7 +37,7 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        log.info("Registering new user with email: {}", request.getEmail());
+        log.info("Registering new user");
         
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Email is already registered");
@@ -66,7 +66,7 @@ public class AuthService {
 
         UserDto userDto = userMapper.toDto(user);
 
-        log.info("User registered successfully with ID: {}", user.getId());
+        log.info("User registered successfully");
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -79,7 +79,7 @@ public class AuthService {
 
     @Transactional
     public AuthResponse login(LoginRequest request) {
-        log.info("User login attempt for email: {}", request.getEmail());
+        log.info("User login attempt");
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
@@ -97,7 +97,7 @@ public class AuthService {
 
         UserDto userDto = userMapper.toDto(user);
 
-        log.info("User logged in successfully with ID: {}", user.getId());
+        log.info("User logged in successfully");
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
@@ -114,7 +114,7 @@ public class AuthService {
                 .orElseThrow(() -> new BadRequestException("Invalid verification token"));
 
         userRepository.verifyEmail(user.getId());
-        log.info("Email verified for user ID: {}", user.getId());
+        log.info("Email verified successfully");
     }
 
     public AuthResponse refreshToken(String refreshToken) {

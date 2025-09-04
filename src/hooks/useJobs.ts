@@ -118,12 +118,17 @@ export const useJobs = (options: UseJobsOptions = {}): UseJobsReturn => {
 
   const applyToJob = async (jobId: string, applicationData: { coverLetter?: string }) => {
     try {
-      // For demo purposes, just log the application
-      console.log('Applying to job:', jobId, applicationData);
-      
+      // SECURITY: Remove sensitive logging
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Applying to job:', jobId);
+      }
+
       // In production, uncomment the API call below
       // await jobsAPI.applyToJob(jobId, applicationData);
-      
+
+      // Prevent unused parameter warning
+      void applicationData;
+
       // Show success message or update UI
     } catch (err) {
       throw new Error(err instanceof Error ? err.message : 'Failed to apply to job');

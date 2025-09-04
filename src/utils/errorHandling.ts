@@ -147,17 +147,27 @@ export const isAuthError = (error: unknown): boolean => {
   return apiError.status === 401 || apiError.status === 403;
 };
 
-// Error boundary helper
+// Error boundary helper - SECURE VERSION
 export const logError = (error: Error, errorInfo?: any) => {
-  console.error('Application Error:', error);
-  if (errorInfo) {
-    console.error('Error Info:', errorInfo);
+  // Only log detailed errors in development
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Application Error:', error.message);
+    if (errorInfo) {
+      console.error('Error Info:', errorInfo);
+    }
   }
 
-  // In production, you might want to send errors to a logging service
-  // Example: Sentry, LogRocket, etc.
+  // In production, send sanitized errors to logging service
   if (process.env.NODE_ENV === 'production') {
-    // sendToLoggingService(error, errorInfo);
+    // Send only non-sensitive error information
+    const sanitizedError = {
+      message: error.message,
+      stack: error.stack?.split('\n')[0], // Only first line of stack
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      url: window.location.href
+    };
+    // sendToLoggingService(sanitizedError);
   }
 };
 

@@ -28,17 +28,17 @@ export const usePerformanceMonitor = (componentName: string) => {
     metrics.averageRenderTime = 
       (metrics.averageRenderTime * (metrics.renderCount - 1) + renderTime) / metrics.renderCount;
 
-    // Log warning if render time is too high
-    if (renderTime > 100) {
+    // Log warning if render time is too high (only in development)
+    if (process.env.NODE_ENV === 'development' && renderTime > 100) {
       console.warn(
-        `[Performance Warning] ${componentName} took ${renderTime.toFixed(2)}ms to render`
+        `[Performance Warning] Component took ${renderTime.toFixed(2)}ms to render`
       );
     }
 
-    // Log warning if too many renders in short time
-    if (metrics.renderCount > 10 && metrics.averageRenderTime > 50) {
+    // Log warning if too many renders in short time (only in development)
+    if (process.env.NODE_ENV === 'development' && metrics.renderCount > 10 && metrics.averageRenderTime > 50) {
       console.warn(
-        `[Performance Warning] ${componentName} has rendered ${metrics.renderCount} times with average time ${metrics.averageRenderTime.toFixed(2)}ms`
+        `[Performance Warning] Component has rendered ${metrics.renderCount} times with average time ${metrics.averageRenderTime.toFixed(2)}ms`
       );
     }
 
@@ -57,7 +57,10 @@ export const useClickProtection = (delay: number = 1000) => {
   const isClickAllowed = (): boolean => {
     const now = Date.now();
     if (now - lastClickTime.current < delay) {
-      console.warn('[Click Protection] Rapid clicks detected, ignoring');
+      // Only log in development mode
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[Click Protection] Rapid clicks detected, ignoring');
+      }
       return false;
     }
     lastClickTime.current = now;
