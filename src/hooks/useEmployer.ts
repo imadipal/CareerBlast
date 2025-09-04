@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Job, JobApplication, EmployerProfile } from '../types';
-// import { employersAPI, jobsAPI } from '../services/api';
-import { mockJobs } from '../data/jobs';
-import { mockJobApplications, mockEmployerProfile } from '../data/employers';
+import { employersAPI, jobsAPI } from '../services/api';
 
 interface UseEmployerDashboardReturn {
   jobs: Job[];
@@ -41,32 +39,32 @@ export const useEmployerDashboard = (): UseEmployerDashboardReturn => {
     setError(null);
 
     try {
-      // For demo purposes, use mock data
-      // In production, uncomment the API calls below
-      
-      // const [jobsResponse, applicationsResponse, profileResponse, statsResponse] = await Promise.all([
-      //   employersAPI.getJobs(),
-      //   employersAPI.getApplications(),
-      //   employersAPI.getProfile(),
-      //   employersAPI.getDashboardStats(),
-      // ]);
+      // Real API calls for production
+      const [jobsResponse, applicationsResponse, profileResponse, statsResponse] = await Promise.all([
+        employersAPI.getJobs(),
+        employersAPI.getApplications(),
+        employersAPI.getProfile(),
+        employersAPI.getDashboardStats(),
+      ]);
 
-      // Mock implementation
-      setJobs(mockJobs);
-      setApplications(mockJobApplications);
-      setProfile(mockEmployerProfile);
-      
-      // Calculate stats from mock data
-      const activeJobs = mockJobs.filter(job => job.isActive).length;
-      const totalApplications = mockJobApplications.length;
-      const hiredCandidates = mockJobApplications.filter(app => app.status === 'hired').length;
-      
-      setStats({
-        activeJobs,
-        totalApplications,
-        profileViews: 1250, // Mock data
-        hiredCandidates,
-      });
+      // Set data from API responses
+      if (jobsResponse.success) {
+        setJobs(jobsResponse.data || []);
+      }
+      if (applicationsResponse.success) {
+        setApplications(applicationsResponse.data || []);
+      }
+      if (profileResponse.success) {
+        setProfile(profileResponse.data);
+      }
+      if (statsResponse.success) {
+        setStats(statsResponse.data || {
+          activeJobs: 0,
+          totalApplications: 0,
+          profileViews: 0,
+          hiredCandidates: 0,
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch dashboard data');
     } finally {
@@ -80,92 +78,80 @@ export const useEmployerDashboard = (): UseEmployerDashboardReturn => {
 
   const createJob = async (jobData: Partial<Job>) => {
     try {
-      // For demo purposes, add to local state
-      const newJob: Job = {
-        id: `job-${Date.now()}`,
-        title: jobData.title || '',
-        company: {
-          id: profile?.id || 'comp-default',
-          name: profile?.companyName || 'Company',
-          logoUrl: profile?.logo,
-          size: profile?.companySize,
-          industry: profile?.industry
-        },
-        location: jobData.location || '',
-        type: (jobData as any).type || 'full-time',
-        jobType: (jobData as any).type || 'full-time',
-        experience: `${jobData.experienceMin || 0}-${jobData.experienceMax || 0} years`,
-        experienceMin: jobData.experienceMin,
-        experienceMax: jobData.experienceMax,
-        experienceLevel: jobData.experienceLevel,
-        salary: {
-          min: jobData.salaryMin || 0,
-          max: jobData.salaryMax || 0,
-          currency: jobData.currency || 'INR',
-        },
-        salaryMin: jobData.salaryMin,
-        salaryMax: jobData.salaryMax,
-        currency: jobData.currency || 'INR',
-        skills: jobData.skills || [],
-        description: jobData.description || '',
-        requirements: jobData.requirements || [],
-        benefits: jobData.benefits || [],
-        postedAt: new Date().toISOString(),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        isActive: true,
-        applicationsCount: 0,
-        employerId: profile?.id || 'emp1',
-      };
-
-      setJobs(prev => [newJob, ...prev]);
-      
-      // In production, use API call:
-      // await jobsAPI.createJob(jobData);
-      // await fetchDashboardData(); // Refetch to get updated data
+      // Real API call for production
+      const response = await jobsAPI.createJob(jobData);
+      if (response.success) {
+        setJobs(prev => [response.data, ...prev]);
+        // Update stats
+        setStats(prev => ({
+          ...prev,
+          activeJobs: prev.activeJobs + 1
+        }));
+      } else {
+        throw new Error(response.message || 'Failed to create job');
+      }
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to create job');
+      setError(err instanceof Error ? err.message : 'Failed to create job');
+      throw err;
     }
   };
 
   const updateJob = async (id: string, jobData: Partial<Job>) => {
     try {
-      setJobs(prev => prev.map(job => 
-        job.id === id ? { ...job, ...jobData } : job
-      ));
-
-      // In production, use API call:
-      // await jobsAPI.updateJob(id, jobData);
+      // Real API call for production
+      const response = await jobsAPI.updateJob(id, jobData);
+      if (response.success) {
+        setJobs(prev => prev.map(job =>
+          job.id === id ? { ...job, ...response.data } : job
+        ));
+      } else {
+        throw new Error(response.message || 'Failed to update job');
+      }
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to update job');
+      setError(err instanceof Error ? err.message : 'Failed to update job');
+      throw err;
     }
   };
 
   const deleteJob = async (id: string) => {
     try {
-      setJobs(prev => prev.filter(job => job.id !== id));
-
-      // In production, use API call:
-      // await jobsAPI.deleteJob(id);
+      // Real API call for production
+      const response = await jobsAPI.deleteJob(id);
+      if (response.success) {
+        setJobs(prev => prev.filter(job => job.id !== id));
+        // Update stats
+        setStats(prev => ({
+          ...prev,
+          activeJobs: prev.activeJobs - 1
+        }));
+      } else {
+        throw new Error(response.message || 'Failed to delete job');
+      }
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to delete job');
+      setError(err instanceof Error ? err.message : 'Failed to delete job');
+      throw err;
     }
   };
 
   const updateApplicationStatus = async (applicationId: string, status: JobApplication['status']) => {
     try {
-      setApplications(prev => prev.map(app =>
-        app.id === applicationId ? { ...app, status } : app
-      ));
+      // Real API call for production
+      const response = await employersAPI.updateApplicationStatus(applicationId, status);
+      if (response.success) {
+        setApplications(prev => prev.map(app =>
+          app.id === applicationId ? { ...app, status } : app
+        ));
 
-      // Update stats if status changed to hired
-      if (status === 'hired') {
-        setStats(prev => ({ ...prev, hiredCandidates: prev.hiredCandidates + 1 }));
+        // Update stats if status changed to hired
+        if (status === 'hired') {
+          setStats(prev => ({ ...prev, hiredCandidates: prev.hiredCandidates + 1 }));
+        }
+      } else {
+        throw new Error(response.message || 'Failed to update application status');
       }
-
-      // In production, use API call:
-      // await employersAPI.updateApplicationStatus(applicationId, status);
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to update application status');
+      setError(err instanceof Error ? err.message : 'Failed to update application status');
+      throw err;
     }
   };
 
