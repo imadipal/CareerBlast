@@ -3,8 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import { jobMatchingService } from '../services/jobMatchingService';
 import { profileValidationService, getProfileCompletionStatus } from '../services/profileValidationService';
 import type { JobMatch, CandidateMatch, MatchingStats, CandidateProfile } from '../types';
-import { enhancedMockJobs } from '../data/enhancedJobs';
-import { mockCandidateProfile } from '../data/candidates';
+import { jobsAPI, candidatesAPI } from '../services/api';
 
 // API Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';

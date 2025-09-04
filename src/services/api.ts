@@ -99,7 +99,7 @@ export const jobsAPI = {
     params.append('page', page.toString());
     params.append('limit', limit.toString());
 
-    const response = await api.get(`/jobs?${params.toString()}`);
+    const response = await api.get(`/jobs/search?${params.toString()}`);
     return response.data;
   },
 
@@ -127,7 +127,7 @@ export const jobsAPI = {
     coverLetter?: string;
     resumeUrl?: string;
   }) => {
-    const response = await api.post(`/jobs/${jobId}/apply`, applicationData);
+    const response = await api.post('/applications', { jobId, ...applicationData });
     return response.data;
   },
 };
@@ -180,34 +180,51 @@ export const candidatesAPI = {
 // Employers API
 export const employersAPI = {
   getProfile: async () => {
-    const response = await api.get('/employers/me');
+    const response = await api.get('/users/me');
     return response.data;
   },
 
   updateProfile: async (profileData: Partial<EmployerProfile>) => {
-    const response = await api.put('/employers/me', profileData);
+    const response = await api.put('/users/me', profileData);
     return response.data;
   },
 
   getJobs: async () => {
-    const response = await api.get('/employers/jobs');
+    // Get jobs created by current employer
+    const response = await api.get('/jobs/search?employer=me');
     return response.data;
   },
 
   getApplications: async (jobId?: string) => {
-    const url = jobId ? `/employers/applications?jobId=${jobId}` : '/employers/applications';
+    const url = jobId ? `/applications?jobId=${jobId}` : '/applications';
     const response = await api.get(url);
     return response.data;
   },
 
   updateApplicationStatus: async (applicationId: string, status: JobApplication['status']) => {
-    const response = await api.put(`/employers/applications/${applicationId}`, { status });
+    const response = await api.put(`/applications/${applicationId}`, { status });
     return response.data;
   },
 
   getDashboardStats: async () => {
-    const response = await api.get('/employers/dashboard/stats');
-    return response.data;
+    // Calculate stats from jobs and applications
+    const [jobsResponse, applicationsResponse] = await Promise.all([
+      api.get('/jobs/search?employer=me'),
+      api.get('/applications')
+    ]);
+
+    const jobs = jobsResponse.data?.data || [];
+    const applications = applicationsResponse.data?.data || [];
+
+    return {
+      success: true,
+      data: {
+        activeJobs: jobs.filter((job: any) => job.isActive).length,
+        totalApplications: applications.length,
+        profileViews: 0, // Not available from backend yet
+        hiredCandidates: applications.filter((app: any) => app.status === 'hired').length,
+      }
+    };
   },
 };
 
