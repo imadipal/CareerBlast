@@ -15,13 +15,13 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "app.aws.s3.enabled", havingValue = "true", matchIfMissing = false)
 public class AwsS3Config {
 
-    @Value("${app.aws.s3.access-key-id}")
+    @Value("${AWS_ACCESS_KEY_ID}")
     private String accessKey;
 
-    @Value("${app.aws.s3.secret-access-key}")
+    @Value("${AWS_SECRET_ACCESS_KEY}")
     private String secretKey;
 
-    @Value("${app.aws.s3.region:ap-south-1}")
+    @Value("${AWS_REGION:ap-south-1}")
     private String region;
 
     @Bean

@@ -86,12 +86,13 @@ app:
 
   aws:
     s3:
-      bucket-name: ${AWS_S3_BUCKET_NAME:careerblast-resumes}
-      region: ${AWS_S3_REGION:ap-south-1}
-      access-key-id: ${AWS_ACCESS_KEY_ID:your_aws_access_key}
-      secret-access-key: ${AWS_SECRET_ACCESS_KEY:your_aws_secret_key}
+      enabled: ${AWS_S3_ENABLED:true}
+      bucket-name: ${S3_RESUMES_BUCKET:mynexjob-resumes}
+      region: ${AWS_REGION:ap-south-1}
+      access-key-id: ${AWS_ACCESS_KEY_ID}
+      secret-access-key: ${AWS_SECRET_ACCESS_KEY}
       presigned-url-expiration: ${AWS_S3_PRESIGNED_URL_EXPIRATION:3600} # 1 hour in seconds
-      max-file-size: ${AWS_S3_MAX_FILE_SIZE:10485760} # 10MB in bytes
+      max-file-size: ${MAX_RESUME_SIZE:10485760} # 10MB in bytes
       allowed-file-types: ${AWS_S3_ALLOWED_FILE_TYPES:pdf,doc,docx}
     allow-credentials: true
 

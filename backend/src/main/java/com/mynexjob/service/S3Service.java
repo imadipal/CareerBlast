@@ -24,7 +24,7 @@ public class S3Service {
 
     private final AmazonS3 amazonS3;
 
-    @Value("${AWS_S3_BUCKET_NAME}")
+    @Value("${S3_RESUMES_BUCKET}")
     private String bucketName;
 
     /**
