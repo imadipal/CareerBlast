@@ -61,16 +61,29 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [profileStatus, setProfileStatus] = useState<any>(null);
 
-  // Mock candidate profile - in real app, this would come from user context
+  // Stub candidate profile - will be replaced with real user profile data
   const candidateProfile: CandidateProfile = {
-    ...mockCandidateProfile,
+    id: user?.id || 'temp-id',
+    userId: user?.id || 'temp-id',
+    firstName: user?.firstName || 'User',
+    lastName: user?.lastName || '',
+    headline: '',
+    summary: '',
+    location: '',
+    experience: [],
+    education: [],
+    skills: [],
     preferences: {
-      ...mockCandidateProfile.preferences,
+      jobTypes: [],
+      locations: [],
+      salaryExpectation: { min: 0, max: 0, currency: 'INR' },
       remoteWork: true,
       hybridWork: true,
     },
-    profileCompletionPercentage: 85,
-    matchingEnabled: true,
+    isPublic: false,
+    profileViews: 0,
+    profileCompletionPercentage: 50,
+    matchingEnabled: false,
   };
 
   const refreshProfileStatus = () => {
@@ -87,40 +100,19 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     setLoadingJobs(true);
     try {
-      // Use the job matching service with strict filtering
-      const matches = await jobMatchingService.findMatchingJobs(
-        candidateProfile,
-        enhancedMockJobs
-      );
-
-      // Filter by minimum threshold
-      const filteredMatches = matches.filter(
-        match => match.matchPercentage >= minThreshold
-      );
-
-      // Apply pagination
-      const startIndex = page * size;
-      const endIndex = startIndex + size;
-      const paginatedMatches = filteredMatches.slice(startIndex, endIndex);
-
-      if (page === 0) {
-        setRecommendedJobs(paginatedMatches);
-      } else {
-        setRecommendedJobs(prev => [...prev, ...paginatedMatches]);
-      }
-
-      // Update matching stats
+      // Stub implementation - will be replaced with real API calls
+      setRecommendedJobs([]);
       setMatchingStats({
-        totalJobs: enhancedMockJobs.length,
-        matchedJobs: filteredMatches.length,
-        totalMatches: filteredMatches.length,
-        averageMatchPercentage: filteredMatches.reduce((sum, match) => sum + match.matchPercentage, 0) / filteredMatches.length || 0,
+        totalJobs: 0,
+        matchedJobs: 0,
+        totalMatches: 0,
+        averageMatchPercentage: 0,
         topSkillsInDemand: ['React', 'TypeScript', 'Node.js', 'Python', 'AWS'],
-        topSkills: candidateProfile.skills.map(s => s.name).slice(0, 5),
-        matchingEnabled: candidateProfile.matchingEnabled,
+        topSkills: [],
+        matchingEnabled: false,
         lastUpdated: new Date().toISOString(),
         profileCompleteness: candidateProfile.profileCompletionPercentage,
-        recommendationsCount: filteredMatches.length,
+        recommendationsCount: 0,
         strictFiltersApplied: {
           salaryFilter: true,
           experienceFilter: true,
@@ -138,18 +130,8 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (user?.role !== 'candidate') return;
 
     try {
-      // Use the job matching service to get top matches
-      const matches = await jobMatchingService.findMatchingJobs(
-        candidateProfile,
-        enhancedMockJobs
-      );
-
-      // Get top matches (highest percentages)
-      const topMatches = matches
-        .filter(match => match.matchPercentage >= 80) // Only high-quality matches for "top"
-        .slice(0, limit);
-
-      setTopMatches(topMatches);
+      // Stub implementation - will be replaced with real API calls
+      setTopMatches([]);
     } catch (error) {
       console.error('Error fetching top matches:', error);
     }
