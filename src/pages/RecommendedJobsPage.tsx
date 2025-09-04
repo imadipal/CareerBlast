@@ -4,6 +4,7 @@ import { TrendingUp, Filter, Search, Sparkles } from 'lucide-react';
 import { useMatching } from '../contexts/MatchingContext';
 import { useAuth } from '../hooks/useAuth';
 import { JobMatchCard } from '../components/jobs/JobMatchCard';
+import { ResumeRequiredGuard } from '../components/profile/ResumeRequiredGuard';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card } from '../components/ui/Card';
@@ -68,8 +69,12 @@ export const RecommendedJobsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <ResumeRequiredGuard
+      message="Upload your resume to access personalized job recommendations"
+      redirectTo="/resume"
+    >
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">
@@ -229,7 +234,8 @@ export const RecommendedJobsPage: React.FC = () => {
             </Button>
           </Card>
         )}
+        </div>
       </div>
-    </div>
+    </ResumeRequiredGuard>
   );
 };

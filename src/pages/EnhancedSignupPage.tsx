@@ -73,7 +73,9 @@ const EnhancedSignupPage: React.FC = () => {
       if (signupData.role === 'employer') {
         setCurrentStep('pending-approval');
       } else {
-        setCurrentStep('success');
+        // For candidates, redirect to welcome page with resume upload
+        window.location.href = '/welcome';
+        return;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid verification code');

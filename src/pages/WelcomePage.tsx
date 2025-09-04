@@ -23,8 +23,8 @@ export const WelcomePage: React.FC = () => {
     },
     {
       id: 'resume',
-      title: 'Upload Your Resume',
-      description: 'Upload your resume to help employers understand your background.',
+      title: 'Upload Your Resume (Required)',
+      description: 'Resume upload is mandatory for all candidates to access job features.',
       icon: FileText,
       component: ResumeStep
     },
@@ -171,11 +171,19 @@ const ResumeStep: React.FC<{
 
   return (
     <div>
-      <ResumeSection 
+      <ResumeSection
         showTitle={false}
-        description="Upload your resume to help employers understand your background and find the best job matches for you."
+        description="⚠️ Resume upload is REQUIRED for all candidates. You cannot proceed without uploading your resume."
         className="mb-8"
       />
+
+      {!resumeInfo?.hasResume && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <p className="text-red-800 text-sm font-medium">
+            📋 Resume upload is mandatory to continue. Please upload your resume above to proceed to the next step.
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-4 justify-between">
         <Button variant="outline" onClick={onBack}>
@@ -183,12 +191,13 @@ const ResumeStep: React.FC<{
         </Button>
         
         <div className="flex gap-4">
-          <Button variant="outline" onClick={onSkip}>
-            <SkipForward className="w-4 h-4 mr-2" />
-            Skip for Now
-          </Button>
-          <Button onClick={onNext}>
-            {resumeInfo?.hasResume ? 'Continue' : 'Skip for Now'}
+          {/* Remove skip option - resume is mandatory */}
+          <Button
+            onClick={onNext}
+            disabled={!resumeInfo?.hasResume}
+            className={!resumeInfo?.hasResume ? 'opacity-50 cursor-not-allowed' : ''}
+          >
+            {resumeInfo?.hasResume ? 'Continue' : 'Upload Resume to Continue'}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>

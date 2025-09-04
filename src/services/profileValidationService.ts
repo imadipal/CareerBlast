@@ -5,6 +5,7 @@ export interface ProfileValidationResult {
   completionPercentage: number;
   missingFields: string[];
   requiredForMatching: {
+    hasResume: boolean;
     hasSalaryExpectation: boolean;
     hasExperienceData: boolean;
     hasSkills: boolean;
@@ -30,6 +31,13 @@ export class ProfileValidationService {
   validateForMatching(profile: CandidateProfile): ProfileValidationResult {
     const missingFields: string[] = [];
     const recommendations: string[] = [];
+
+    // Check resume upload (MANDATORY)
+    const hasResume = this.validateResume(profile);
+    if (!hasResume) {
+      missingFields.push('resume');
+      recommendations.push('Upload your resume - required for all candidates');
+    }
 
     // Check salary expectation
     const hasSalaryExpectation = this.validateSalaryExpectation(profile);
@@ -62,14 +70,15 @@ export class ProfileValidationService {
     // Calculate completion percentage
     const completionPercentage = this.calculateCompletionPercentage(profile);
 
-    // Profile is valid for matching if it has required fields
-    const isValid = hasSalaryExpectation && hasExperienceData;
+    // Profile is valid for matching if it has ALL required fields including resume
+    const isValid = hasResume && hasSalaryExpectation && hasExperienceData;
 
     return {
       isValid,
       completionPercentage,
       missingFields,
       requiredForMatching: {
+        hasResume,
         hasSalaryExpectation,
         hasExperienceData,
         hasSkills,
@@ -94,6 +103,15 @@ export class ProfileValidationService {
         action: 'Update your profile basics',
       },
       {
+        id: 'resume_upload',
+        title: 'Resume Upload',
+        description: 'Upload your resume - required for all candidates',
+        isCompleted: this.validateResume(profile),
+        isRequired: true,
+        weight: 25,
+        action: 'Upload your resume',
+      },
+      {
         id: 'salary_expectation',
         title: 'Salary Expectations',
         description: 'Set your expected salary range for accurate job matching',
@@ -108,7 +126,7 @@ export class ProfileValidationService {
         description: 'Specify your total years of experience and current level',
         isCompleted: this.validateExperienceData(profile),
         isRequired: true,
-        weight: 20,
+        weight: 15,
         action: 'Update experience information',
       },
       {
@@ -117,7 +135,7 @@ export class ProfileValidationService {
         description: 'Add your key skills and proficiency levels',
         isCompleted: this.validateSkills(profile),
         isRequired: false,
-        weight: 15,
+        weight: 10,
         action: 'Add your skills',
       },
       {
@@ -126,7 +144,7 @@ export class ProfileValidationService {
         description: 'Add your previous work experience and achievements',
         isCompleted: this.validateWorkExperience(profile),
         isRequired: false,
-        weight: 15,
+        weight: 10,
         action: 'Add work experience',
       },
       {
@@ -189,7 +207,7 @@ export class ProfileValidationService {
    * Check if profile meets minimum requirements for job recommendations
    */
   meetsMinimumRequirements(profile: CandidateProfile): boolean {
-    return this.validateSalaryExpectation(profile) && this.validateExperienceData(profile);
+    return this.validateResume(profile) && this.validateSalaryExpectation(profile) && this.validateExperienceData(profile);
   }
 
   /**
@@ -198,6 +216,11 @@ export class ProfileValidationService {
   getImprovementSuggestions(profile: CandidateProfile): string[] {
     const suggestions: string[] = [];
     const validation = this.validateForMatching(profile);
+
+    // Resume is MANDATORY - prioritize this
+    if (!validation.requiredForMatching.hasResume) {
+      suggestions.push('🚨 REQUIRED: Upload your resume - mandatory for all candidates');
+    }
 
     if (!validation.requiredForMatching.hasSalaryExpectation) {
       suggestions.push('Add your salary expectations to unlock personalized job recommendations');
@@ -217,10 +240,6 @@ export class ProfileValidationService {
 
     if (profile.education.length === 0) {
       suggestions.push('Include your education to complete your professional profile');
-    }
-
-    if (!profile.resume) {
-      suggestions.push('Upload your resume to make it easier for employers to evaluate your candidacy');
     }
 
     if (validation.completionPercentage < 80) {
@@ -285,6 +304,10 @@ export class ProfileValidationService {
       prefs.locations &&
       prefs.locations.length > 0
     );
+  }
+
+  private validateResume(profile: CandidateProfile): boolean {
+    return !!(profile.resume && profile.resume.trim().length > 0);
   }
 }
 

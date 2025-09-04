@@ -62,7 +62,12 @@ export const SignupPage: React.FC = () => {
       };
       localStorage.setItem('user', JSON.stringify(user));
 
-      navigate('/');
+      // Redirect based on role
+      if (user.role === 'candidate') {
+        navigate('/welcome');
+      } else {
+        navigate('/');
+      }
     } catch (error: any) {
       console.error('Signup error:', error);
       // Handle error - you might want to show a toast notification here

@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import JobCard from '../components/jobs/JobCard';
 import JobModal from '../components/jobs/JobModal';
+import { ResumeRequiredGuard } from '../components/profile/ResumeRequiredGuard';
 import { Button, Pagination } from '../components/ui';
 import { useMatching } from '../contexts/MatchingContext';
+import { useAuth } from '../hooks/useAuth';
 import type { Job } from '../types';
 
 export const JobsPage: React.FC = () => {
@@ -52,6 +54,79 @@ export const JobsPage: React.FC = () => {
     setSelectedJob(null);
   };
 
+  const { user } = useAuth();
+
+  // Only apply resume requirement for candidates
+  if (user?.role === 'candidate') {
+    return (
+      <ResumeRequiredGuard
+        message="Upload your resume to browse and apply for jobs"
+        redirectTo="/resume"
+      >
+        <JobsPageContent
+          jobs={jobs}
+          loadingJobs={loadingJobs}
+          totalJobs={totalJobs}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          jobsPerPage={jobsPerPage}
+          handleViewDetails={handleViewDetails}
+          selectedJob={selectedJob}
+          isModalOpen={isModalOpen}
+          handleCloseModal={handleCloseModal}
+          fetchRecommendedJobs={fetchRecommendedJobs}
+        />
+      </ResumeRequiredGuard>
+    );
+  }
+
+  return (
+    <JobsPageContent
+      jobs={jobs}
+      loadingJobs={loadingJobs}
+      totalJobs={totalJobs}
+      currentPage={currentPage}
+      setCurrentPage={setCurrentPage}
+      jobsPerPage={jobsPerPage}
+      handleViewDetails={handleViewDetails}
+      selectedJob={selectedJob}
+      isModalOpen={isModalOpen}
+      handleCloseModal={handleCloseModal}
+      fetchRecommendedJobs={fetchRecommendedJobs}
+    />
+  );
+};
+
+// Extract the main content into a separate component
+const JobsPageContent: React.FC<{
+  jobs: Job[];
+  loadingJobs: boolean;
+  totalJobs: number;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  jobsPerPage: number;
+  handleViewDetails: (job: Job) => void;
+  selectedJob: Job | null;
+  isModalOpen: boolean;
+  handleCloseModal: () => void;
+  fetchRecommendedJobs: (minThreshold?: number, page?: number, limit?: number) => void;
+}> = ({
+  jobs,
+  loadingJobs,
+  totalJobs,
+  currentPage,
+  setCurrentPage,
+  jobsPerPage,
+  handleViewDetails,
+  selectedJob,
+  isModalOpen,
+  handleCloseModal,
+  fetchRecommendedJobs
+}) => {
+  // Calculate pagination info inside the component
+  const totalPages = Math.ceil(totalJobs / jobsPerPage);
+  const startIndex = (currentPage - 1) * jobsPerPage + 1;
+  const endIndex = Math.min(currentPage * jobsPerPage, totalJobs);
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,8 +1,12 @@
-# Profile Picture Upload Implementation Guide
+# Profile Picture & Resume Upload Implementation Guide
 
 ## 🎯 Overview
 
-This guide covers the complete implementation of profile picture upload functionality using AWS S3 with presigned URLs for secure, direct-to-cloud uploads.
+This guide covers the complete implementation of both profile picture and resume upload functionality using AWS S3 with presigned URLs for secure, direct-to-cloud uploads.
+
+## 🚨 **IMPORTANT: Resume Upload is MANDATORY for Candidates**
+
+**All candidates must upload their resume before accessing job features. This is enforced throughout the application.**
 
 ## 🏗️ Architecture
 
