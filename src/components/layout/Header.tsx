@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut, Settings, Sparkles, Plus, Users } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, Sparkles, Plus, Users, FileText } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
 import { useAuth } from '../../hooks/useAuth';
@@ -23,6 +23,7 @@ export const Header: React.FC = React.memo(() => {
     if (isAuthenticated && user?.role === 'candidate') {
       return [
         { label: 'Recommended', href: '/recommended-jobs', icon: Sparkles },
+        { label: 'Resume', href: '/resume', icon: FileText },
         ...baseItems,
       ];
     }

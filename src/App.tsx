@@ -30,6 +30,8 @@ import SubscriptionSuccessPage from './pages/SubscriptionSuccessPage';
 import SubscriptionManagePage from './pages/SubscriptionManagePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { RoutingTestPage } from './pages/RoutingTestPage';
+import ResumePage from './pages/ResumePage';
+import WelcomePage from './pages/WelcomePage';
 
 function App() {
   return (
@@ -71,6 +73,22 @@ function App() {
                     element={
                       <ProtectedRoute requiredRole="candidate">
                         <CandidateProfilePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/resume"
+                    element={
+                      <ProtectedRoute requiredRole="candidate">
+                        <ResumePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/welcome"
+                    element={
+                      <ProtectedRoute requiredRole="candidate">
+                        <WelcomePage />
                       </ProtectedRoute>
                     }
                   />
