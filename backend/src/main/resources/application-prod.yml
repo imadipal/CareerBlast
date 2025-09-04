@@ -1,0 +1,222 @@
+spring:
+  application:
+    name: careerblast-api
+  
+  profiles:
+    active: prod
+  
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+      database: ${MONGODB_DATABASE:careerblast}
+      auto-index-creation: true
+      # Production MongoDB settings
+      options:
+        max-connection-idle-time: 60000
+        max-connection-life-time: 120000
+        max-wait-time: 120000
+        connect-timeout: 10000
+        socket-timeout: 0
+        server-selection-timeout: 30000
+        max-pool-size: 100
+        min-pool-size: 10
+  
+  cache:
+    type: redis
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+    cache-names:
+      - jobs
+      - companies
+      - skills
+      - user-profiles
+  
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: ${SMTP_HOST}
+  
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:10MB}
+      max-request-size: ${MAX_REQUEST_SIZE:10MB}
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /api/v1
+  
+  # Production server settings
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  
+  http2:
+    enabled: true
+  
+  # SSL Configuration (if terminating SSL at application level)
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEYSTORE_PATH:}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD:}
+    key-store-type: ${SSL_KEYSTORE_TYPE:PKCS12}
+  
+  # Connection settings
+  tomcat:
+    max-connections: 8192
+    max-threads: 200
+    min-spare-threads: 10
+    connection-timeout: 20000
+    keep-alive-timeout: 60000
+    max-keep-alive-requests: 100
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+      probes:
+        enabled: true
+    
+    info:
+      enabled: true
+    
+    metrics:
+      enabled: true
+  
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+      datadog:
+        enabled: ${DATADOG_ENABLED:false}
+        api-key: ${DATADOG_API_KEY:}
+        application-key: ${DATADOG_APP_KEY:}
+    
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      sla:
+        http.server.requests: 50ms,100ms,200ms,300ms,500ms,1s,2s,5s
+  
+  health:
+    mongo:
+      enabled: true
+    redis:
+      enabled: true
+    diskspace:
+      enabled: true
+      threshold: 1GB
+
+logging:
+  level:
+    com.careerblast: ${LOG_LEVEL:INFO}
+    org.springframework.security: WARN
+    org.springframework.data.mongodb: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    org.apache.http: WARN
+    com.amazonaws: WARN
+  
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"
+  
+  file:
+    name: ${LOG_FILE_PATH:/var/log/careerblast/application.log}
+    max-size: 100MB
+    max-history: 30
+    total-size-cap: 3GB
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:86400000} # 24 hours
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 days
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://careerblast.com,https://www.careerblast.com}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
+
+  razorpay:
+    key-id: ${RAZORPAY_KEY_ID}
+    key-secret: ${RAZORPAY_KEY_SECRET}
+    webhook-secret: ${RAZORPAY_WEBHOOK_SECRET}
+
+  aws:
+    s3:
+      bucket-name: ${AWS_S3_BUCKET_NAME}
+      region: ${AWS_S3_REGION}
+      access-key-id: ${AWS_ACCESS_KEY_ID}
+      secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+      presigned-url-expiration: ${AWS_S3_PRESIGNED_URL_EXPIRATION:3600}
+      max-file-size: ${AWS_S3_MAX_FILE_SIZE:10485760}
+      allowed-file-types: ${AWS_S3_ALLOWED_FILE_TYPES:pdf,doc,docx}
+    allow-credentials: true
+
+  file:
+    upload-dir: ${FILE_UPLOAD_DIR:/tmp/uploads}
+    max-size: ${FILE_MAX_SIZE:10485760}
+
+  pagination:
+    default-page-size: 20
+    max-page-size: 100
+
+  # AI Matching Configuration
+  openai:
+    api-key: ${OPENAI_API_KEY}
+    timeout: ${OPENAI_TIMEOUT:60}
+
+  matching:
+    minimum-threshold: ${MATCHING_THRESHOLD:70.0}
+    enable-ai: ${ENABLE_AI_MATCHING:true}
+    cache-duration: ${MATCHING_CACHE_DURATION:3600}
+
+  # Rate Limiting
+  rate-limit:
+    requests-per-minute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:100}
+    requests-per-hour: ${RATE_LIMIT_REQUESTS_PER_HOUR:1000}
+
+  # Security
+  security:
+    bcrypt-rounds: ${BCRYPT_ROUNDS:12}
+    account-lock-time: ${ACCOUNT_LOCK_TIME:7200000}
+    max-login-attempts: ${MAX_LOGIN_ATTEMPTS:5}
+
+  # Monitoring
+  monitoring:
+    sentry:
+      dsn: ${SENTRY_DSN:}
+      environment: production
+      release: ${APP_VERSION:1.0.0}
+    
+    newrelic:
+      license-key: ${NEW_RELIC_LICENSE_KEY:}
+      app-name: CareerBlast-API-Production

@@ -1,0 +1,145 @@
+spring:
+  application:
+    name: careerblast-api
+  
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb+srv://username:password@cluster.mongodb.net/careerblast?retryWrites=true&w=majority}
+      database: ${MONGODB_DATABASE:careerblast}
+      auto-index-creation: true
+  
+  cache:
+    type: simple
+    cache-names:
+      - jobs
+      - companies
+      - skills
+  
+  mail:
+    host: ${SMTP_HOST:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASS:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /api/v1
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+  http2:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    com.careerblast: ${LOG_LEVEL:INFO}
+    org.springframework.security: ${SECURITY_LOG_LEVEL:WARN}
+    org.hibernate.SQL: ${SQL_LOG_LEVEL:WARN}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${SQL_PARAM_LOG_LEVEL:WARN}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:mySecretKeyForCareerBlastApplicationThatIsLongEnoughForHS256Algorithm}
+    expiration: ${JWT_EXPIRATION:86400000} # 24 hours
+    refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 days
+
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+
+  razorpay:
+    key-id: ${RAZORPAY_KEY_ID:your_razorpay_key_id}
+    key-secret: ${RAZORPAY_KEY_SECRET:your_razorpay_key_secret}
+    webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:your_webhook_secret}
+
+  aws:
+    s3:
+      bucket-name: ${AWS_S3_BUCKET_NAME:careerblast-resumes}
+      region: ${AWS_S3_REGION:ap-south-1}
+      access-key-id: ${AWS_ACCESS_KEY_ID:your_aws_access_key}
+      secret-access-key: ${AWS_SECRET_ACCESS_KEY:your_aws_secret_key}
+      presigned-url-expiration: ${AWS_S3_PRESIGNED_URL_EXPIRATION:3600} # 1 hour in seconds
+      max-file-size: ${AWS_S3_MAX_FILE_SIZE:10485760} # 10MB in bytes
+      allowed-file-types: ${AWS_S3_ALLOWED_FILE_TYPES:pdf,doc,docx}
+    allow-credentials: true
+
+  file:
+    upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+    max-size: ${FILE_MAX_SIZE:10485760} # 10MB
+
+  pagination:
+    default-page-size: 20
+    max-page-size: 100
+
+  # AI Matching Configuration
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    timeout: ${OPENAI_TIMEOUT:60}
+
+  matching:
+    minimum-threshold: ${MATCHING_THRESHOLD:70.0}
+    enable-ai: ${ENABLE_AI_MATCHING:true}
+    cache-duration: ${MATCHING_CACHE_DURATION:3600} # 1 hour
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb+srv://username:password@cluster.mongodb.net/careerblast-dev?retryWrites=true&w=majority&authSource=admin}
+      database: ${MONGODB_DATABASE:careerblast-dev}
+
+logging:
+  level:
+    com.careerblast: DEBUG
+    org.springframework.data.mongodb: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  
+  jpa:
+    show-sql: false
+
+
+logging:
+  level:
+    com.careerblast: INFO
+    org.springframework.security: WARN
