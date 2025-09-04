@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with Gradient -->
+  <circle cx="32" cy="32" r="32" fill="url(#gradient)" />
+  
+  <!-- Briefcase Icon -->
+  <g transform="translate(16, 16)">
+    <!-- Main briefcase body -->
+    <rect x="4" y="12" width="24" height="16" rx="2" fill="white" opacity="0.95"/>
+    
+    <!-- Briefcase handle -->
+    <rect x="12" y="8" width="8" height="4" rx="1" fill="white" opacity="0.8"/>
+    
+    <!-- Briefcase lock -->
+    <rect x="14" y="18" width="4" height="3" rx="0.5" fill="#0284c7"/>
+    
+    <!-- Arrow pointing up (representing growth/next opportunity) -->
+    <path d="M16 6 L20 2 L24 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
+  </g>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0284c7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0369a1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

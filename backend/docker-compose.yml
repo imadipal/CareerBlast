@@ -38,19 +38,19 @@ services:
       timeout: 10s
       retries: 3
 
-  # CareerBlast Backend API
+  # MyNexJob Backend API
   api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: careerblast-api
+    container_name: mynexjob-api
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: careerblast
-      DB_USERNAME: careerblast
-      DB_PASSWORD: careerblast
+      DB_NAME: mynexjob
+      DB_USERNAME: mynexjob
+      DB_PASSWORD: mynexjob
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET: your-super-secret-jwt-key-for-docker
@@ -63,7 +63,7 @@ services:
       redis:
         condition: service_healthy
     networks:
-      - careerblast-network
+      - mynexjob-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/actuator/health"]
       interval: 30s
@@ -76,5 +76,5 @@ volumes:
   redis_data:
 
 networks:
-  careerblast-network:
+  mynexjob-network:
     driver: bridge

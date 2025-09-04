@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, Briefcase, LogOut, Settings, Sparkles, Plus, Users } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, Sparkles, Plus, Users } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Logo } from '../ui/Logo';
 import { useAuth } from '../../hooks/useAuth';
 import { useClickProtection } from '../../hooks/usePerformanceMonitor';
 
@@ -85,11 +86,8 @@ export const Header: React.FC = React.memo(() => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-xl group-hover:shadow-glow transition-all duration-300 shadow-soft">
-              <Briefcase className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">MyNexJob</span>
+          <Link to="/" className="group">
+            <Logo size="md" showText={true} />
           </Link>
 
           {/* Desktop Navigation */}
