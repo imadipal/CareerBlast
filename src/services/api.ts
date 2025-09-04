@@ -232,3 +232,4 @@ export const uploadFile = async (file: File, type: 'resume' | 'avatar' | 'compan
 };
 
 export default api;
+export { api };

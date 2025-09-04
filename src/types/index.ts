@@ -106,6 +106,9 @@ export interface Job {
   isActive: boolean;
   applicationsCount: number;
   employerId: string;
+  actualSalaryMin?: number;
+  actualSalaryMax?: number;
+  matchingEnabled?: boolean;
 }
 
 export interface JobFilters {
@@ -124,6 +127,8 @@ export interface JobFilters {
 export interface CandidateProfile {
   id: string;
   userId: string;
+  firstName?: string;
+  lastName?: string;
   headline: string;
   summary: string;
   location: string;
@@ -150,6 +155,10 @@ export interface CandidateProfile {
   profileViews: number;
   matchingEnabled?: boolean;
   profileCompletionPercentage?: number;
+  totalExperienceYears?: number;
+  currentExperienceLevel?: string;
+  hasRequiredMatchingData?: boolean;
+  minimumMatchThreshold?: number;
 }
 
 export interface WorkExperience {
@@ -338,6 +347,7 @@ export interface NavItem {
 
 // Job Matching Types
 export interface JobMatch {
+  id?: string;
   job: Job;
   matchPercentage: number;
   breakdown?: MatchBreakdown;
@@ -347,6 +357,13 @@ export interface JobMatch {
   salaryMatch?: boolean;
   experienceMatch?: boolean;
   locationMatch?: boolean;
+  salaryMatches?: any;
+  experienceMatches?: any;
+  skillsMatch?: {
+    percentage: number;
+    matched: string[];
+  };
+  matchReasons?: string[];
 }
 
 export interface MatchBreakdown {
@@ -409,3 +426,24 @@ export interface CandidateMatch {
   hasApplied: boolean;
   applicationStatus?: string;
 }
+
+// Additional types for job matching
+export interface StrictFilterResult {
+  passed: boolean;
+  passesFilters?: boolean;
+  reasons: string[];
+  salaryMatch?: boolean;
+  experienceMatch?: boolean;
+}
+
+export interface MatchingConfig {
+  salaryFilterEnabled: boolean;
+  experienceFilterEnabled: boolean;
+  minimumMatchThreshold: number;
+  enableStrictFilters?: boolean;
+  aiMatchingEnabled?: boolean;
+}
+
+// Constants
+export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+export const ALLOWED_FILE_TYPES = ['pdf', 'doc', 'docx'];

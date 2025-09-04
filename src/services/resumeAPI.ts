@@ -1,13 +1,12 @@
 import { api } from './api';
+import { MAX_FILE_SIZE, ALLOWED_FILE_TYPES } from '../types';
 import type {
   ResumeUploadRequest,
   PresignedUploadResponse,
   ResumeUploadCompleteRequest,
   ResumeInfo,
   ResumeDownloadResponse,
-  FileValidation,
-  ALLOWED_FILE_TYPES,
-  MAX_FILE_SIZE
+  FileValidation
 } from '../types/resume';
 
 export const resumeAPI = {

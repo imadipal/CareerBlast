@@ -15,6 +15,7 @@ const EnhancedSignupForm: React.FC<EnhancedSignupFormProps> = ({ onSubmit, loadi
     lastName: '',
     email: '',
     password: '',
+    confirmPassword: '',
     role: 'candidate',
     linkedinProfile: '',
     companyName: '',

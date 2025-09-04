@@ -46,3 +46,9 @@ backend/*.log
 *.jks
 secrets/
 credentials/
+
+# Frontend build issues - exclude backend models and configs from frontend
+src/models/
+src/config/database.ts
+src/config/s3.ts
+src/services/databaseService.ts
