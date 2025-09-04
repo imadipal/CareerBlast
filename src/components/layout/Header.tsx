@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, Briefcase, LogOut, Settings, Sparkles, Plus, Users } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../hooks/useAuth';
+import { useClickProtection } from '../../hooks/usePerformanceMonitor';
 
-export const Header: React.FC = () => {
+export const Header: React.FC = React.memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
+  const isClickAllowed = useClickProtection(500); // 500ms protection
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = useCallback((path: string) => location.pathname === path, [location.pathname]);
 
-  const getNavItems = () => {
+  const getNavItems = useCallback(() => {
     const baseItems = [
       { label: 'Find Jobs', href: '/jobs' },
       { label: 'About', href: '/about' },
@@ -42,9 +44,41 @@ export const Header: React.FC = () => {
     }
 
     return baseItems;
-  };
+  }, [isAuthenticated, user?.role, user?.isApproved]);
 
   const navItems = getNavItems();
+
+  const handleMenuToggle = useCallback(() => {
+    if (!isClickAllowed()) return;
+    setIsMenuOpen(prev => !prev);
+  }, [isClickAllowed]);
+
+  const handleUserMenuToggle = useCallback(() => {
+    if (!isClickAllowed()) return;
+    setIsUserMenuOpen(prev => !prev);
+  }, [isClickAllowed]);
+
+  const handleLogout = useCallback(() => {
+    if (!isClickAllowed()) return;
+    logout();
+    setIsUserMenuOpen(false);
+  }, [logout, isClickAllowed]);
+
+  const handleMobileNavClick = useCallback(() => {
+    if (!isClickAllowed()) return;
+    setIsMenuOpen(false);
+  }, [isClickAllowed]);
+
+  const handleUserMenuClose = useCallback(() => {
+    if (!isClickAllowed()) return;
+    setIsUserMenuOpen(false);
+  }, [isClickAllowed]);
+
+  const handleMobileLogout = useCallback(() => {
+    if (!isClickAllowed()) return;
+    logout();
+    setIsMenuOpen(false);
+  }, [logout, isClickAllowed]);
 
   return (
     <header className="glass border-b border-white/20 sticky top-0 z-50 shadow-soft">
@@ -81,7 +115,7 @@ export const Header: React.FC = () => {
             {isAuthenticated ? (
               <div className="relative">
                 <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  onClick={handleUserMenuToggle}
                   className="flex items-center space-x-2 p-2 rounded-lg text-gray-700 hover:text-brand-600 hover:bg-gray-50 transition-colors"
                 >
                   <div className="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center">
@@ -98,7 +132,7 @@ export const Header: React.FC = () => {
                       <Link
                         to="/employer/dashboard"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsUserMenuOpen(false)}
+                        onClick={handleUserMenuClose}
                       >
                         <User className="w-4 h-4 mr-2" />
                         Dashboard
@@ -107,7 +141,7 @@ export const Header: React.FC = () => {
                       <Link
                         to="/profile"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsUserMenuOpen(false)}
+                        onClick={handleUserMenuClose}
                       >
                         <User className="w-4 h-4 mr-2" />
                         Profile
@@ -116,16 +150,13 @@ export const Header: React.FC = () => {
                     <Link
                       to="/settings"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsUserMenuOpen(false)}
+                      onClick={handleUserMenuClose}
                     >
                       <Settings className="w-4 h-4 mr-2" />
                       Settings
                     </Link>
                     <button
-                      onClick={() => {
-                        logout();
-                        setIsUserMenuOpen(false);
-                      }}
+                      onClick={handleLogout}
                       className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       <LogOut className="w-4 h-4 mr-2" />
@@ -158,7 +189,7 @@ export const Header: React.FC = () => {
           {/* Mobile menu button */}
           <button
             className="md:hidden p-2 rounded-md text-gray-700 hover:text-primary-600 hover:bg-gray-100"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={handleMenuToggle}
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -177,7 +208,7 @@ export const Header: React.FC = () => {
                       ? 'text-brand-600'
                       : 'text-gray-700 hover:text-brand-600'
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={handleMobileNavClick}
                 >
                   {'icon' in item && item.icon && <item.icon className="w-4 h-4" />}
                   <span>{item.label}</span>
@@ -201,10 +232,7 @@ export const Header: React.FC = () => {
                       </Button>
                     </Link>
                     <button
-                      onClick={() => {
-                        logout();
-                        setIsMenuOpen(false);
-                      }}
+                      onClick={handleMobileLogout}
                       className="w-full"
                     >
                       <Button variant="ghost" size="sm" className="w-full justify-start">
@@ -239,4 +267,4 @@ export const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+});

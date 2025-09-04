@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { jobMatchingService } from '../services/jobMatchingService';
 import { profileValidationService, getProfileCompletionStatus } from '../services/profileValidationService';
@@ -86,10 +86,10 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     matchingEnabled: false,
   };
 
-  const refreshProfileStatus = () => {
+  const refreshProfileStatus = useCallback(() => {
     const status = getProfileCompletionStatus(candidateProfile);
     setProfileStatus(status);
-  };
+  }, [candidateProfile]);
 
   const canViewRecommendations = () => {
     return profileValidationService.meetsMinimumRequirements(candidateProfile);
@@ -126,7 +126,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
-  const fetchTopMatches = async (limit = 10) => {
+  const fetchTopMatches = useCallback(async (limit = 10) => {
     if (user?.role !== 'candidate') return;
 
     try {
@@ -135,7 +135,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } catch (error) {
       console.error('Error fetching top matches:', error);
     }
-  };
+  }, [user?.role]);
 
   const fetchMatchingCandidates = async (_jobId: string, _page = 0, _size = 20) => {
     if (user?.role !== 'employer') return;
@@ -230,7 +230,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       fetchTopMatches();
       refreshProfileStatus();
     }
-  }, [user]);
+  }, [user, fetchTopMatches, refreshProfileStatus]);
 
   const value: MatchingContextType = {
     recommendedJobs,
