@@ -55,7 +55,7 @@ export const Header: React.FC = () => {
             <div className="flex items-center justify-center w-10 h-10 bg-gradient-primary rounded-xl group-hover:shadow-glow transition-all duration-300 shadow-soft">
               <Briefcase className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">CareerBlast</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">MyNexJob</span>
           </Link>
 
           {/* Desktop Navigation */}

@@ -34,7 +34,7 @@ export const Footer: React.FC = () => {
       ],
     },
     {
-      title: 'CareerBlast',
+      title: 'MyNexJob',
       links: [
         { label: 'About', href: '/about' },
         { label: 'Privacy', href: '/privacy' },
@@ -57,7 +57,7 @@ export const Footer: React.FC = () => {
               <div className="w-10 h-10 bg-gradient-to-r from-brand-500 to-brand-600 rounded-xl flex items-center justify-center shadow-glow">
                 <Briefcase className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">CareerBlast</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">MyNexJob</span>
             </Link>
             <p className="text-gray-300 text-base mb-8 leading-relaxed">
               Your dream job awaits. Connect with top companies and find opportunities that match your skills and aspirations.
@@ -104,7 +104,7 @@ export const Footer: React.FC = () => {
         <div className="border-t border-gray-700/50 mt-16 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-300 text-sm">
-              © {currentYear} CareerBlast. All rights reserved. Made with ❤️ for job seekers.
+              © {currentYear} MyNexJob. All rights reserved. Made with ❤️ for job seekers.
             </p>
             <div className="flex space-x-8 mt-4 md:mt-0">
               <Link to="/privacy" className="text-gray-300 hover:text-white text-sm transition-colors hover:underline">

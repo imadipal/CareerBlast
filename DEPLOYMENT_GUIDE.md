@@ -1,4 +1,4 @@
-# CareerBlast Deployment Guide - NO CORS ERRORS
+# MyNexJob Deployment Guide - NO CORS ERRORS
 
 ## 🎯 **Zero CORS Strategy**
 
@@ -14,7 +14,7 @@ Deploy both frontend and backend on the same platform (Railway/Render)
 
 ### Step 1: Deploy Frontend
 1. Go to [vercel.com](https://vercel.com)
-2. Import your GitHub repository: `imadipal/CareerBlast`
+2. Import your GitHub repository: `imadipal/MyNexJob`
 3. Configure settings:
    - **Framework**: Vite
    - **Build Command**: `npm run build`

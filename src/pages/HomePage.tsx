@@ -42,7 +42,7 @@ export const HomePage: React.FC = () => {
                   Find Your Dream Job with{' '}
                 </span>
                 <span className="bg-gradient-to-r from-brand-600 to-brand-700 bg-clip-text text-transparent">
-                  CareerBlast
+                  MyNexJob
                 </span>
               </h1>
 
@@ -166,7 +166,7 @@ export const HomePage: React.FC = () => {
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                Why Choose CareerBlast?
+                Why Choose MyNexJob?
               </span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -248,7 +248,7 @@ export const HomePage: React.FC = () => {
 
             <div className="bg-gray-50 p-8 rounded-lg">
               <blockquote className="text-lg text-gray-700 mb-6">
-                "Little did I know about the reach of CareerBlast. They have hundreds of start-ups searching for candidates. I received a good number of offers!"
+                "Little did I know about the reach of MyNexJob. They have hundreds of start-ups searching for candidates. I received a good number of offers!"
               </blockquote>
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
