@@ -1,4 +1,14 @@
-# CareerBlast Deployment Guide
+# CareerBlast Deployment Guide - NO CORS ERRORS
+
+## 🎯 **Zero CORS Strategy**
+
+### Option 1: Deploy Backend First (Recommended)
+1. **Deploy Backend** → Get backend URL
+2. **Update vercel.json** → Point to backend URL
+3. **Deploy Frontend** → No CORS errors!
+
+### Option 2: Same Domain Deployment
+Deploy both frontend and backend on the same platform (Railway/Render)
 
 ## 🚀 Frontend Deployment (Vercel)
 
@@ -14,13 +24,14 @@
 Add these environment variables in Vercel:
 
 ```bash
-# For Development (Backend running locally)
-VITE_API_BASE_URL=http://localhost:8080/api/v1
-VITE_ENVIRONMENT=development
-
-# For Production (When backend is deployed)
-VITE_API_BASE_URL=https://your-backend-domain.com/api/v1
+# For Production (Different Origins - No CORS Issues)
+VITE_API_BASE_URL=https://your-backend-domain.railway.app/api/v1
 VITE_ENVIRONMENT=production
+
+# Examples for different platforms:
+# Railway: https://careerblast-backend-production.up.railway.app/api/v1
+# Render: https://careerblast-backend.onrender.com/api/v1
+# Heroku: https://careerblast-backend.herokuapp.com/api/v1
 ```
 
 ## 🔧 Backend Deployment Options
@@ -41,6 +52,31 @@ VITE_ENVIRONMENT=production
 1. Install Heroku CLI
 2. Create new app: `heroku create careerblast-backend`
 3. Deploy: `git subtree push --prefix backend heroku main`
+
+### Backend Environment Variables
+Add these to your backend deployment platform:
+
+```bash
+# CORS Configuration (CRITICAL for No CORS Errors)
+CORS_ALLOWED_ORIGINS=https://career-blast.vercel.app,https://career-blast-*.vercel.app,https://*.vercel.app
+
+# Database
+MONGODB_URI=your_mongodb_connection_string
+
+# JWT
+JWT_SECRET=your_super_secure_jwt_secret_key
+JWT_EXPIRATION=86400000
+
+# AWS S3
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+AWS_S3_BUCKET_NAME=your-bucket-name
+AWS_S3_REGION=your-region
+
+# Razorpay
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+```
 
 ## 🚨 CORS Configuration
 

@@ -3,14 +3,12 @@ import type { Job, JobFilters, CandidateProfile, EmployerProfile, JobApplication
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ||
-           import.meta.env.VITE_API_URL ||
-           (import.meta.env.DEV ? '/api/v1' : 'https://your-backend-url.com/api/v1'),
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: false, // Set to true if you need cookies/auth
+  withCredentials: true, // Enable credentials for CORS
 });
 
 // Request interceptor to add auth token
