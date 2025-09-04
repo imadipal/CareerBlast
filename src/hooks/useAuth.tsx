@@ -70,17 +70,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await authAPI.login(email, password);
 
       if (response.success && response.data) {
-        const { token, user } = response.data;
+        const { accessToken, user } = response.data;
+
+        // Map backend user role to frontend role
+        const mappedUser = {
+          ...user,
+          role: user.role === 'USER' ? 'candidate' :
+                user.role === 'EMPLOYER' ? 'employer' :
+                user.role.toLowerCase()
+        };
 
         // Store in localStorage
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('token', token);
-        localStorage.setItem('authToken', token); // For API interceptor
+        localStorage.setItem('user', JSON.stringify(mappedUser));
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('authToken', accessToken); // For API interceptor
 
         setAuthState({
-          user,
-          token,
+          user: mappedUser,
+          token: accessToken,
           isAuthenticated: true,
           isLoading: false,
         });
@@ -101,17 +109,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await authAPI.signup(userData);
 
       if (response.success && response.data) {
-        const { token, user } = response.data;
+        const { accessToken, user } = response.data;
+
+        // Map backend user role to frontend role
+        const mappedUser = {
+          ...user,
+          role: user.role === 'USER' ? 'candidate' :
+                user.role === 'EMPLOYER' ? 'employer' :
+                user.role.toLowerCase()
+        };
 
         // Store in localStorage
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('token', token);
-        localStorage.setItem('authToken', token); // For API interceptor
+        localStorage.setItem('user', JSON.stringify(mappedUser));
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('authToken', accessToken); // For API interceptor
 
         setAuthState({
-          user,
-          token,
+          user: mappedUser,
+          token: accessToken,
           isAuthenticated: true,
           isLoading: false,
         });

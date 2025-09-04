@@ -32,6 +32,7 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { RoutingTestPage } from './pages/RoutingTestPage';
 import ResumePage from './pages/ResumePage';
 import WelcomePage from './pages/WelcomePage';
+import AuthDebug from './components/debug/AuthDebug';
 
 function App() {
   return (
@@ -177,6 +178,7 @@ function App() {
               </Layout>
             </MatchingProvider>
           </DataProvider>
+          <AuthDebug />
         </AuthProvider>
       </Router>
     </ErrorBoundary>

@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, Lock, Eye, EyeOff, User, Briefcase } from 'lucide-react';
 import { Button, Input, Card, Select } from '../components/ui';
-import { authAPI } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 import { sanitizeForLogging } from '../utils/security';
 import { secureLog } from '../utils/secureLogging';
 import type { SignupForm } from '../types';
@@ -27,8 +27,8 @@ const signupSchema = z.object({
 export const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { signup, isLoading } = useAuth();
 
   const {
     register,
@@ -39,7 +39,7 @@ export const SignupPage: React.FC = () => {
   });
 
   const onSubmit = async (data: SignupForm) => {
-    setIsLoading(true);
+    // Loading state is handled by AuthContext
     try {
       // Use secure logging - never logs passwords
       secureLog.info('Signup attempt', {
@@ -49,7 +49,8 @@ export const SignupPage: React.FC = () => {
         role: data.role
       });
 
-      const response = await authAPI.signup({
+      // Use the AuthContext signup method
+      await signup({
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
@@ -57,24 +58,10 @@ export const SignupPage: React.FC = () => {
         role: data.role === 'candidate' ? 'USER' : 'EMPLOYER'
       });
 
-      // Sanitize response before logging
-      secureLog.info('Signup successful', sanitizeForLogging(response));
-
-      // Store authentication data
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('token', response.data.accessToken);
-
-      // Map backend roles to frontend roles
-      const user = {
-        ...response.data.user,
-        role: response.data.user.role === 'USER' ? 'candidate' :
-              response.data.user.role === 'EMPLOYER' ? 'employer' :
-              response.data.user.role.toLowerCase()
-      };
-      localStorage.setItem('user', JSON.stringify(user));
+      secureLog.info('Signup successful');
 
       // Redirect based on role
-      if (user.role === 'candidate') {
+      if (data.role === 'candidate') {
         navigate('/welcome');
       } else {
         navigate('/');
@@ -84,11 +71,9 @@ export const SignupPage: React.FC = () => {
       secureLog.error('Signup failed', sanitizeForLogging(error));
 
       // Handle error with proper user feedback
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      const errorMessage = error.message || 'Registration failed. Please try again.';
       // TODO: Replace with proper toast notification
       alert(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 

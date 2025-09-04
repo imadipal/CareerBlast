@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
 import { Button, Input, Card } from '../components/ui';
-import { authAPI } from '../services/api';
+import { useAuth } from '../hooks/useAuth';
 import { sanitizeForLogging } from '../utils/security';
 import { secureLog } from '../utils/secureLogging';
 import type { LoginForm } from '../types';
@@ -17,9 +17,9 @@ const loginSchema = z.object({
 
 export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { login, isLoading } = useAuth();
 
   const {
     register,
@@ -30,40 +30,25 @@ export const LoginPage: React.FC = () => {
   });
 
   const onSubmit = async (data: LoginForm) => {
-    setIsLoading(true);
     setError(null); // Clear any previous errors
     try {
       // Use secure logging - never logs passwords
       secureLog.info('Login attempt', { email: data.email });
 
-      const response = await authAPI.login(data.email, data.password);
+      // Use the AuthContext login method
+      await login(data.email, data.password);
 
-      // Sanitize response before logging
-      secureLog.info('Login successful', sanitizeForLogging(response));
+      secureLog.info('Login successful');
 
-      // Store authentication data
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('token', response.data.accessToken);
-
-      // Map backend roles to frontend roles
-      const user = {
-        ...response.data.user,
-        role: response.data.user.role === 'USER' ? 'candidate' :
-              response.data.user.role === 'EMPLOYER' ? 'employer' :
-              response.data.user.role.toLowerCase()
-      };
-      localStorage.setItem('user', JSON.stringify(user));
-
+      // Navigate to home page
       navigate('/');
     } catch (error: any) {
       // Use secure error logging
       secureLog.error('Login failed', sanitizeForLogging(error));
 
       // Handle error with proper user feedback
-      const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
+      const errorMessage = error.message || 'Login failed. Please try again.';
       setError(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 
