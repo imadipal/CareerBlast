@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { Mail, Lock, Eye, EyeOff, User, Briefcase } from 'lucide-react';
 import { Button, Input, Card, Select } from '../components/ui';
 import { authAPI } from '../services/api';
+import { sanitizeForLogging } from '../utils/security';
+import { secureLog } from '../utils/secureLogging';
 import type { SignupForm } from '../types';
 
 const signupSchema = z.object({
@@ -39,7 +41,14 @@ export const SignupPage: React.FC = () => {
   const onSubmit = async (data: SignupForm) => {
     setIsLoading(true);
     try {
-      console.log('Attempting signup with:', data);
+      // Use secure logging - never logs passwords
+      secureLog.info('Signup attempt', {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        role: data.role
+      });
+
       const response = await authAPI.signup({
         firstName: data.firstName,
         lastName: data.lastName,
@@ -47,7 +56,9 @@ export const SignupPage: React.FC = () => {
         password: data.password,
         role: data.role === 'candidate' ? 'USER' : 'EMPLOYER'
       });
-      console.log('Signup response:', response);
+
+      // Sanitize response before logging
+      secureLog.info('Signup successful', sanitizeForLogging(response));
 
       // Store authentication data
       localStorage.setItem('isAuthenticated', 'true');
@@ -69,10 +80,13 @@ export const SignupPage: React.FC = () => {
         navigate('/');
       }
     } catch (error: any) {
-      console.error('Signup error:', error);
-      // Handle error - you might want to show a toast notification here
+      // Use secure error logging
+      secureLog.error('Signup failed', sanitizeForLogging(error));
+
+      // Handle error with proper user feedback
       const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
-      alert(errorMessage); // Replace with proper error handling later
+      // TODO: Replace with proper toast notification
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }

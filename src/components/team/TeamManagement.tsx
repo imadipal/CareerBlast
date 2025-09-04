@@ -72,7 +72,7 @@ const TeamManagement: React.FC<TeamManagementProps> = ({
         invitedAt: '2024-01-20T14:00:00Z',
         expiresAt: '2024-01-27T14:00:00Z',
         status: 'pending',
-        token: 'invite-token-123'
+        token: crypto.randomUUID() // Generate secure random token
       }
     ]);
   }, [organization.id]);

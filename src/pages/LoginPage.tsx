@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
 import { Button, Input, Card } from '../components/ui';
 import { authAPI } from '../services/api';
+import { sanitizeForLogging } from '../utils/security';
+import { secureLog } from '../utils/secureLogging';
 import type { LoginForm } from '../types';
 
 const loginSchema = z.object({
@@ -16,6 +18,7 @@ const loginSchema = z.object({
 export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const {
@@ -28,10 +31,15 @@ export const LoginPage: React.FC = () => {
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
+    setError(null); // Clear any previous errors
     try {
-      console.log('Attempting login with:', data);
+      // Use secure logging - never logs passwords
+      secureLog.info('Login attempt', { email: data.email });
+
       const response = await authAPI.login(data.email, data.password);
-      console.log('Login response:', response);
+
+      // Sanitize response before logging
+      secureLog.info('Login successful', sanitizeForLogging(response));
 
       // Store authentication data
       localStorage.setItem('isAuthenticated', 'true');
@@ -48,10 +56,12 @@ export const LoginPage: React.FC = () => {
 
       navigate('/');
     } catch (error: any) {
-      console.error('Login error:', error);
-      // Handle error - you might want to show a toast notification here
+      // Use secure error logging
+      secureLog.error('Login failed', sanitizeForLogging(error));
+
+      // Handle error with proper user feedback
       const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
-      alert(errorMessage); // Replace with proper error handling later
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -81,6 +91,11 @@ export const LoginPage: React.FC = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <Card className="py-8 px-4 shadow sm:px-10">
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <Input
               label="Email address"

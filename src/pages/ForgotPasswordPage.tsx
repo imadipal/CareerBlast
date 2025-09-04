@@ -29,10 +29,16 @@ export const ForgotPasswordPage: React.FC = () => {
     try {
       // Mock password reset - replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Password reset data:', data);
+      // Use secure logging - only log email, never passwords
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Password reset request for:', data.email);
+      }
       setIsSubmitted(true);
-    } catch (error) {
-      console.error('Password reset error:', error);
+    } catch (error: any) {
+      // Use secure error logging
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Password reset error:', error?.message || 'Unknown error');
+      }
     } finally {
       setIsLoading(false);
     }
