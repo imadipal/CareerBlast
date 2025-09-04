@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { jobMatchingService } from '../services/jobMatchingService';
 import { profileValidationService, getProfileCompletionStatus } from '../services/profileValidationService';
@@ -61,8 +61,8 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [profileStatus, setProfileStatus] = useState<any>(null);
 
-  // Stub candidate profile - will be replaced with real user profile data
-  const candidateProfile: CandidateProfile = {
+  // Memoized candidate profile - will be replaced with real user profile data
+  const candidateProfile: CandidateProfile = useMemo(() => ({
     id: user?.id || 'temp-id',
     userId: user?.id || 'temp-id',
     firstName: user?.firstName || 'User',
@@ -84,7 +84,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     profileViews: 0,
     profileCompletionPercentage: 50,
     matchingEnabled: false,
-  };
+  }), [user?.id, user?.firstName, user?.lastName]);
 
   const refreshProfileStatus = useCallback(() => {
     const status = getProfileCompletionStatus(candidateProfile);
@@ -230,7 +230,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       fetchTopMatches();
       refreshProfileStatus();
     }
-  }, [user, fetchTopMatches, refreshProfileStatus]);
+  }, [user?.role, user?.id]); // Only depend on user role and id, not the functions
 
   const value: MatchingContextType = {
     recommendedJobs,
