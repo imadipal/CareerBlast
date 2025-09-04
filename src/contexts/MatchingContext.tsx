@@ -86,16 +86,16 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     matchingEnabled: false,
   }), [user?.id, user?.firstName, user?.lastName]);
 
-  const refreshProfileStatus = useCallback(() => {
-    const status = getProfileCompletionStatus(candidateProfile);
-    setProfileStatus(status);
-  }, [candidateProfile]);
-
   const canViewRecommendations = () => {
     return profileValidationService.meetsMinimumRequirements(candidateProfile);
   };
 
-  const fetchRecommendedJobs = async (minThreshold = 70, page = 0, size = 20) => {
+  const refreshProfileStatus = () => {
+    const status = getProfileCompletionStatus(candidateProfile);
+    setProfileStatus(status);
+  };
+
+  const fetchRecommendedJobs = useCallback(async (minThreshold = 70, page = 0, size = 20) => {
     if (user?.role !== 'candidate') return;
 
     setLoadingJobs(true);
@@ -111,7 +111,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         topSkills: [],
         matchingEnabled: false,
         lastUpdated: new Date().toISOString(),
-        profileCompleteness: candidateProfile.profileCompletionPercentage,
+        profileCompleteness: 50, // Static value to avoid dependency issues
         recommendationsCount: 0,
         strictFiltersApplied: {
           salaryFilter: true,
@@ -124,7 +124,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setLoadingJobs(false);
     }
-  };
+  }, [user?.role]);
 
   const fetchTopMatches = useCallback(async (limit = 10) => {
     if (user?.role !== 'candidate') return;
@@ -137,7 +137,7 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [user?.role]);
 
-  const fetchMatchingCandidates = async (_jobId: string, _page = 0, _size = 20) => {
+  const fetchMatchingCandidates = useCallback(async (_jobId: string, _page = 0, _size = 20) => {
     if (user?.role !== 'employer') return;
 
     setLoadingCandidates(true);
@@ -149,9 +149,9 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setLoadingCandidates(false);
     }
-  };
+  }, [user?.role]);
 
-  const fetchJobApplicants = async (_jobId: string, _page = 0, _size = 20) => {
+  const fetchJobApplicants = useCallback(async (_jobId: string, _page = 0, _size = 20) => {
     if (user?.role !== 'employer') return;
 
     setLoadingCandidates(true);
@@ -163,9 +163,9 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setLoadingCandidates(false);
     }
-  };
+  }, [user?.role]);
 
-  const getJobMatch = async (jobId: string): Promise<JobMatch | null> => {
+  const getJobMatch = useCallback(async (jobId: string): Promise<JobMatch | null> => {
     if (!token || user?.role !== 'candidate') return null;
 
     try {
@@ -182,9 +182,9 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       console.error('Error fetching job match:', error);
     }
     return null;
-  };
+  }, [token, user?.role]);
 
-  const enableMatching = async () => {
+  const enableMatching = useCallback(async () => {
     if (!token) return;
 
     try {
@@ -202,9 +202,9 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } catch (error) {
       console.error('Error enabling matching:', error);
     }
-  };
+  }, [token]);
 
-  const disableMatching = async () => {
+  const disableMatching = useCallback(async () => {
     if (!token) return;
 
     try {
@@ -222,15 +222,22 @@ export const MatchingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } catch (error) {
       console.error('Error disabling matching:', error);
     }
-  };
+  }, [token]);
 
-  // Load initial data when user changes
+  // Load initial data when user changes - simplified to avoid infinite loops
   useEffect(() => {
     if (user?.role === 'candidate') {
       fetchTopMatches();
-      refreshProfileStatus();
     }
-  }, [user?.role, user?.id]); // Only depend on user role and id, not the functions
+  }, [user?.role, user?.id]); // Only depend on stable user properties
+
+  // Separate effect for profile status that only runs when needed
+  useEffect(() => {
+    if (user?.role === 'candidate') {
+      const status = getProfileCompletionStatus(candidateProfile);
+      setProfileStatus(status);
+    }
+  }, [user?.role]); // Only depend on user role, not candidateProfile
 
   const value: MatchingContextType = {
     recommendedJobs,
