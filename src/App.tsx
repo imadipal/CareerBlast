@@ -28,6 +28,7 @@ import PaymentPage from './pages/PaymentPage';
 import SubscriptionSuccessPage from './pages/SubscriptionSuccessPage';
 import SubscriptionManagePage from './pages/SubscriptionManagePage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { RoutingTestPage } from './pages/RoutingTestPage';
 
 function App() {
   return (
@@ -79,6 +80,7 @@ function App() {
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/privacy" element={<PrivacyPage />} />
                   <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/routing-test" element={<RoutingTestPage />} />
                   <Route
                     path="/pricing"
                     element={
