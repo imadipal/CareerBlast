@@ -3,16 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings, Sparkles, Plus, Users } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
-import { SafeLink } from '../ui/SafeLink';
 import { useAuth } from '../../hooks/useAuth';
-import { useClickProtection } from '../../hooks/usePerformanceMonitor';
 
 export const Header: React.FC = React.memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
-  const isClickAllowed = useClickProtection(200); // 200ms protection
 
   const isActive = useCallback((path: string) => location.pathname === path, [location.pathname]);
 
@@ -51,36 +48,30 @@ export const Header: React.FC = React.memo(() => {
   const navItems = getNavItems();
 
   const handleMenuToggle = useCallback(() => {
-    if (!isClickAllowed()) return;
     setIsMenuOpen(prev => !prev);
-  }, [isClickAllowed]);
+  }, []);
 
   const handleUserMenuToggle = useCallback(() => {
-    if (!isClickAllowed()) return;
     setIsUserMenuOpen(prev => !prev);
-  }, [isClickAllowed]);
+  }, []);
 
   const handleLogout = useCallback(() => {
-    if (!isClickAllowed()) return;
     logout();
     setIsUserMenuOpen(false);
-  }, [logout, isClickAllowed]);
+  }, [logout]);
 
   const handleMobileNavClick = useCallback(() => {
-    if (!isClickAllowed()) return;
     setIsMenuOpen(false);
-  }, [isClickAllowed]);
+  }, []);
 
   const handleUserMenuClose = useCallback(() => {
-    if (!isClickAllowed()) return;
     setIsUserMenuOpen(false);
-  }, [isClickAllowed]);
+  }, []);
 
   const handleMobileLogout = useCallback(() => {
-    if (!isClickAllowed()) return;
     logout();
     setIsMenuOpen(false);
-  }, [logout, isClickAllowed]);
+  }, [logout]);
 
   return (
     <header className="glass border-b border-white/20 sticky top-0 z-50 shadow-soft">
@@ -94,10 +85,9 @@ export const Header: React.FC = React.memo(() => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
-              <SafeLink
+              <Link
                 key={item.href}
                 to={item.href}
-                throttleDelay={200}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive(item.href)
                     ? 'text-brand-600 bg-white/60 shadow-soft'
@@ -106,7 +96,7 @@ export const Header: React.FC = React.memo(() => {
               >
                 {'icon' in item && item.icon && <item.icon className="w-4 h-4" />}
                 <span>{item.label}</span>
-              </SafeLink>
+              </Link>
             ))}
           </nav>
 
@@ -200,10 +190,9 @@ export const Header: React.FC = React.memo(() => {
           <div className="md:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
               {navItems.map((item) => (
-                <SafeLink
+                <Link
                   key={item.href}
                   to={item.href}
-                  throttleDelay={200}
                   className={`flex items-center space-x-2 text-sm font-medium transition-colors ${
                     isActive(item.href)
                       ? 'text-brand-600'
@@ -213,7 +202,7 @@ export const Header: React.FC = React.memo(() => {
                 >
                   {'icon' in item && item.icon && <item.icon className="w-4 h-4" />}
                   <span>{item.label}</span>
-                </SafeLink>
+                </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-gray-200">
                 {isAuthenticated ? (

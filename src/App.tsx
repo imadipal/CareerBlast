@@ -32,111 +32,111 @@ import { NotFoundPage } from './pages/NotFoundPage';
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <DataProvider>
-          <MatchingProvider>
-            <Router>
-            <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/jobs" element={<JobsPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<EnhancedSignupPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute requiredRole="candidate">
-                  <CandidateProfilePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/employer/dashboard"
-              element={
-                <ProtectedRoute requiredRole="employer">
-                  <EmployerDashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/about" element={<AboutPage />} />
-            <Route
-              path="/recommended-jobs"
-              element={
-                <ProtectedRoute requiredRole="candidate">
-                  <RecommendedJobsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/smart-jobs"
-              element={
-                <ProtectedRoute requiredRole="candidate">
-                  <SmartJobsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route
-              path="/pricing"
-              element={
-                <ProtectedRoute requiredRole="employer" requireApproval={true}>
-                  <PricingPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/team"
-              element={
-                <ProtectedRoute requiredRole="employer">
-                  <TeamManagementPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/invite/accept" element={<AcceptInvitationPage />} />
-            <Route path="/recruiter/apply" element={<RecruiterApplicationPage />} />
-            <Route
-              path="/admin/recruiters"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <AdminRecruiterManagementPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/subscription/payment"
-              element={
-                <ProtectedRoute requiredRole="employer">
-                  <PaymentPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/subscription/success"
-              element={
-                <ProtectedRoute requiredRole="employer">
-                  <SubscriptionSuccessPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/subscription/manage"
-              element={
-                <ProtectedRoute requiredRole="employer">
-                  <SubscriptionManagePage />
-                </ProtectedRoute>
-              }
-            />
-            {/* Catch-all route for 404 pages */}
-            <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-            </Layout>
-          </Router>
-          </MatchingProvider>
-        </DataProvider>
-      </AuthProvider>
+      <Router>
+        <AuthProvider>
+          <DataProvider>
+            <MatchingProvider>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/jobs" element={<JobsPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/signup" element={<EnhancedSignupPage />} />
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute requiredRole="candidate">
+                        <CandidateProfilePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/employer/dashboard"
+                    element={
+                      <ProtectedRoute requiredRole="employer">
+                        <EmployerDashboardPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route
+                    path="/recommended-jobs"
+                    element={
+                      <ProtectedRoute requiredRole="candidate">
+                        <RecommendedJobsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/smart-jobs"
+                    element={
+                      <ProtectedRoute requiredRole="candidate">
+                        <SmartJobsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route
+                    path="/pricing"
+                    element={
+                      <ProtectedRoute requiredRole="employer" requireApproval={true}>
+                        <PricingPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/team"
+                    element={
+                      <ProtectedRoute requiredRole="employer">
+                        <TeamManagementPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/invite/accept" element={<AcceptInvitationPage />} />
+                  <Route path="/recruiter/apply" element={<RecruiterApplicationPage />} />
+                  <Route
+                    path="/admin/recruiters"
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminRecruiterManagementPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/subscription/payment"
+                    element={
+                      <ProtectedRoute requiredRole="employer">
+                        <PaymentPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/subscription/success"
+                    element={
+                      <ProtectedRoute requiredRole="employer">
+                        <SubscriptionSuccessPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/subscription/manage"
+                    element={
+                      <ProtectedRoute requiredRole="employer">
+                        <SubscriptionManagePage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* Catch-all route for 404 pages */}
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </Layout>
+            </MatchingProvider>
+          </DataProvider>
+        </AuthProvider>
+      </Router>
     </ErrorBoundary>
   );
 }
