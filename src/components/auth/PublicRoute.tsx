@@ -48,7 +48,9 @@ export const PublicRoute: React.FC<PublicRouteProps> = ({
       redirectPath = from;
     }
 
-    console.log(`🔒 Authenticated user trying to access ${location.pathname}, redirecting to ${redirectPath}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔒 PublicRoute: Authenticated user (${user?.role}) trying to access ${location.pathname}, redirecting to ${redirectPath}`);
+    }
     
     return <Navigate to={redirectPath} replace />;
   }

@@ -82,6 +82,28 @@ src/
 └── utils/              # Utility functions
 ```
 
+## 🔐 Authentication & Route Protection
+
+The application implements comprehensive route protection:
+
+### Protected Routes
+- **ProtectedRoute**: Redirects unauthenticated users to login
+- **PublicRoute**: Redirects authenticated users away from auth pages
+- **Role-based access**: Different routes for candidates, employers, and admins
+
+### Smart Redirects
+- **Candidates** → `/recommended-jobs`
+- **Employers** → `/employer/dashboard`
+- **Admins** → `/admin/recruiters`
+
+### Auth Pages Protection
+Authenticated users cannot access:
+- `/login` - Login page
+- `/signup` - Signup page
+- `/forgot-password` - Password reset page
+
+Even typing these URLs directly will redirect authenticated users to their appropriate dashboard.
+
 ## 🔧 Configuration
 
 The project uses Vite for fast development and building. Key configuration files:
