@@ -15,7 +15,7 @@ export const HomePage: React.FC = () => {
     if (isAuthenticated && user?.role === 'candidate') {
       fetchTopMatches(3);
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user?.role, fetchTopMatches]);
 
   return (
     <div className="min-h-screen">

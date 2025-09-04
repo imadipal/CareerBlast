@@ -25,10 +25,10 @@ export const RecommendedJobsPage: React.FC = () => {
 
   useEffect(() => {
     if (user?.role === 'candidate') {
-      fetchRecommendedJobs(currentPage);
+      fetchRecommendedJobs(70, currentPage);
       fetchTopMatches(5);
     }
-  }, [user, currentPage]);
+  }, [user?.role, currentPage, fetchRecommendedJobs, fetchTopMatches]);
 
   const handleJobApply = (jobId: string) => {
     navigate(`/jobs/${jobId}/apply`);
