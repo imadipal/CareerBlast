@@ -27,6 +27,7 @@ import PricingPage from './pages/PricingPage';
 import PaymentPage from './pages/PaymentPage';
 import SubscriptionSuccessPage from './pages/SubscriptionSuccessPage';
 import SubscriptionManagePage from './pages/SubscriptionManagePage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -128,6 +129,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            {/* Catch-all route for 404 pages */}
+            <Route path="*" element={<NotFoundPage />} />
             </Routes>
             </Layout>
           </Router>
