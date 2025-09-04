@@ -5,6 +5,7 @@ import { MatchingProvider } from './contexts/MatchingContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Layout } from './components/layout/Layout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { PublicRoute } from './components/auth/PublicRoute';
 import { HomePage } from './pages/HomePage';
 import { JobsPage } from './pages/JobsPage';
 import { LoginPage } from './pages/LoginPage';
@@ -41,9 +42,30 @@ function App() {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/jobs" element={<JobsPage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/signup" element={<EnhancedSignupPage />} />
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route
+                    path="/login"
+                    element={
+                      <PublicRoute>
+                        <LoginPage />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/signup"
+                    element={
+                      <PublicRoute>
+                        <EnhancedSignupPage />
+                      </PublicRoute>
+                    }
+                  />
+                  <Route
+                    path="/forgot-password"
+                    element={
+                      <PublicRoute>
+                        <ForgotPasswordPage />
+                      </PublicRoute>
+                    }
+                  />
                   <Route
                     path="/profile"
                     element={

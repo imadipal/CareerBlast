@@ -20,8 +20,9 @@ export const RoutingTestPage: React.FC = () => {
     { path: '/jobs', label: 'Jobs' },
     { path: '/about', label: 'About' },
     { path: '/contact', label: 'Contact' },
-    { path: '/login', label: 'Login' },
-    { path: '/signup', label: 'Signup' }
+    { path: '/login', label: 'Login (Protected)' },
+    { path: '/signup', label: 'Signup (Protected)' },
+    { path: '/forgot-password', label: 'Forgot Password (Protected)' }
   ];
 
   const handleProgrammaticNavigation = (path: string) => {
@@ -111,7 +112,7 @@ export const RoutingTestPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold text-yellow-800 mb-2">
               How to Test Navigation Issues
             </h3>
@@ -122,6 +123,25 @@ export const RoutingTestPage: React.FC = () => {
               <li>Open browser console to see debug logs</li>
               <li>If URL changes but content doesn't update, there's a routing issue</li>
             </ol>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-blue-800 mb-2">
+              Auth Route Protection Testing
+            </h3>
+            <div className="text-blue-700 space-y-2">
+              <p><strong>If you're logged in:</strong></p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Login/Signup/Forgot Password links should redirect you away</li>
+                <li>You should be redirected to your role-specific dashboard</li>
+                <li>Typing auth URLs directly should also redirect you</li>
+              </ul>
+              <p><strong>If you're logged out:</strong></p>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>Auth pages should load normally</li>
+                <li>Protected routes should redirect to login</li>
+              </ul>
+            </div>
           </div>
 
           <div className="mt-6 text-center">
