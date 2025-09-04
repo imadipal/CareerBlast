@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User, AuthState } from '../types/index';
+import { authAPI } from '../services/api';
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
@@ -31,7 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (isAuthenticated && userStr) {
           const user = JSON.parse(userStr);
-          const token = localStorage.getItem('token');
+          const token = localStorage.getItem('token') || localStorage.getItem('authToken');
           setAuthState({
             user,
             token,
@@ -60,67 +61,65 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (email: string, _password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      // Mock API call - replace with actual authentication
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setAuthState(prev => ({ ...prev, isLoading: true }));
 
-      const mockUser: User = {
-        id: '1',
-        email,
-        firstName: 'John',
-        lastName: 'Doe',
-        role: 'candidate',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      // Call real API
+      const response = await authAPI.login(email, password);
 
-      const mockToken = 'mock-jwt-token-' + Date.now();
+      if (response.success && response.data) {
+        const { token, user } = response.data;
 
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      localStorage.setItem('token', mockToken);
+        // Store in localStorage
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', token);
+        localStorage.setItem('authToken', token); // For API interceptor
 
-      setAuthState({
-        user: mockUser,
-        token: mockToken,
-        isAuthenticated: true,
-        isLoading: false,
-      });
-    } catch (error) {
-      throw new Error('Login failed');
+        setAuthState({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        throw new Error(response.message || 'Login failed');
+      }
+    } catch (error: any) {
+      setAuthState(prev => ({ ...prev, isLoading: false }));
+      throw new Error(error.response?.data?.message || error.message || 'Login failed');
     }
   };
 
   const signup = async (userData: any) => {
     try {
-      // Mock API call - replace with actual registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockUser: User = {
-        id: '1',
-        email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        role: userData.role,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      setAuthState(prev => ({ ...prev, isLoading: true }));
 
-      const mockToken = 'mock-jwt-token-' + Date.now();
+      // Call real API
+      const response = await authAPI.signup(userData);
 
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('user', JSON.stringify(mockUser));
-      localStorage.setItem('token', mockToken);
+      if (response.success && response.data) {
+        const { token, user } = response.data;
 
-      setAuthState({
-        user: mockUser,
-        token: mockToken,
-        isAuthenticated: true,
-        isLoading: false,
-      });
-    } catch (error) {
-      throw new Error('Signup failed');
+        // Store in localStorage
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', token);
+        localStorage.setItem('authToken', token); // For API interceptor
+
+        setAuthState({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        throw new Error(response.message || 'Signup failed');
+      }
+    } catch (error: any) {
+      setAuthState(prev => ({ ...prev, isLoading: false }));
+      throw new Error(error.response?.data?.message || error.message || 'Signup failed');
     }
   };
 
@@ -128,6 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('authToken'); // For API interceptor
 
     setAuthState({
       user: null,
