@@ -1,0 +1,10 @@
+version: "2"
+authtoken: # Your ngrok auth token will be here automatically
+
+tunnels:
+  frontend:
+    addr: 8081
+    proto: http
+  backend:
+    addr: 8080
+    proto: http

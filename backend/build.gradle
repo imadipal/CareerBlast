@@ -32,6 +32,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+    // Environment variables support
+    implementation 'me.paulschwarz:spring-dotenv:2.5.4'
+
     // Database (keeping PostgreSQL commented for future reference)
     // implementation 'org.postgresql:postgresql'
     // implementation 'org.flywaydb:flyway-core'
