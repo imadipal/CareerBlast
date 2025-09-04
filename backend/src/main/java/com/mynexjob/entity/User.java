@@ -47,6 +47,7 @@ public class User extends BaseEntity implements UserDetails {
     private LocalDateTime passwordResetExpiresAt;
     private LocalDateTime lastLoginAt;
     private String profilePictureUrl;
+    private String avatarFileKey; // S3 file key for avatar
     private String bio;
     private String location;
     private String websiteUrl;

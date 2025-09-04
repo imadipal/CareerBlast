@@ -44,6 +44,51 @@ public class S3Service {
         // Generate unique key for the file
         String fileKey = generateFileKey(userId, fileName, fileExtension);
 
+        return generatePresignedUrl(fileKey, fileSize);
+    }
+
+    /**
+     * Generate presigned URL for uploading profile picture
+     */
+    public PresignedUploadResponse generateAvatarUploadUrl(String userId, String fileName, String fileExtension, long fileSize) {
+        // Validate file type for images
+        if (!isImageFileTypeAllowed(fileExtension)) {
+            throw new IllegalArgumentException("File type not allowed. Allowed types: jpg, jpeg, png, webp");
+        }
+
+        // Validate file size (5MB limit for images)
+        if (fileSize > 5 * 1024 * 1024) {
+            throw new IllegalArgumentException("File size exceeds maximum allowed size of 5MB");
+        }
+
+        String fileKey = generateFileKey(userId, fileName, "avatars");
+
+        return generatePresignedUrl(fileKey, fileSize);
+    }
+
+    /**
+     * Generate presigned URL for uploading company logo
+     */
+    public PresignedUploadResponse generateCompanyLogoUploadUrl(String companyId, String fileName, String fileExtension, long fileSize) {
+        // Validate file type for images
+        if (!isImageFileTypeAllowed(fileExtension)) {
+            throw new IllegalArgumentException("File type not allowed. Allowed types: jpg, jpeg, png, webp, svg");
+        }
+
+        // Validate file size (2MB limit for logos)
+        if (fileSize > 2 * 1024 * 1024) {
+            throw new IllegalArgumentException("File size exceeds maximum allowed size of 2MB");
+        }
+
+        String fileKey = generateFileKey(companyId, fileName, "company-logos");
+
+        return generatePresignedUrl(fileKey, fileSize);
+    }
+
+    /**
+     * Common method to generate presigned URL
+     */
+    private PresignedUploadResponse generatePresignedUrl(String fileKey, long fileSize) {
         try {
             // Set expiration time (1 hour)
             Date expiration = new Date();
@@ -58,7 +103,7 @@ public class S3Service {
 
             URL presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
 
-            log.info("Generated presigned upload URL for user: {} and file: {}", userId, fileName);
+            log.info("Generated presigned upload URL for file key: {}", fileKey);
 
             return PresignedUploadResponse.builder()
                     .presignedUrl(presignedUrl.toString())
@@ -68,7 +113,7 @@ public class S3Service {
                     .build();
 
         } catch (Exception e) {
-            log.error("Error generating presigned upload URL for user: {} and file: {}", userId, fileName, e);
+            log.error("Error generating presigned upload URL for file key: {}", fileKey, e);
             throw new RuntimeException("Failed to generate presigned upload URL", e);
         }
     }
@@ -149,13 +194,13 @@ public class S3Service {
     /**
      * Generate unique file key
      */
-    private String generateFileKey(String userId, String fileName, String fileExtension) {
+    private String generateFileKey(String userId, String fileName, String folder) {
         String timestamp = String.valueOf(System.currentTimeMillis());
         String uniqueId = UUID.randomUUID().toString().substring(0, 8);
         String sanitizedFileName = sanitizeFileName(fileName);
-        
-        return String.format("resumes/%s/%s_%s_%s.%s", 
-            userId, timestamp, uniqueId, sanitizedFileName, fileExtension);
+
+        return String.format("%s/%s/%s_%s_%s",
+            folder, userId, timestamp, uniqueId, sanitizedFileName);
     }
 
     /**
@@ -182,6 +227,22 @@ public class S3Service {
         String lowerCaseExtension = fileExtension.toLowerCase();
         for (String allowedType : allowedTypes) {
             if (allowedType.equals(lowerCaseExtension)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if image file type is allowed
+     */
+    private boolean isImageFileTypeAllowed(String fileExtension) {
+        String[] allowedTypes = {"jpg", "jpeg", "png", "webp", "svg"};
+        if (fileExtension == null) return false;
+
+        String lowerCaseExtension = fileExtension.toLowerCase();
+        for (String allowedType : allowedTypes) {
+            if (lowerCaseExtension.equals(allowedType)) {
                 return true;
             }
         }

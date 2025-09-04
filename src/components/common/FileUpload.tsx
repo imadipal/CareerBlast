@@ -45,9 +45,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
       case 'profile-picture':
         return {
           title: 'Upload Profile Picture',
-          description: 'JPG, PNG files up to 2MB',
+          description: 'JPG, PNG, WebP files up to 5MB',
           icon: Image,
-          acceptText: 'JPG, PNG',
+          acceptText: 'JPG, PNG, WebP',
         };
       case 'company-logo':
         return {

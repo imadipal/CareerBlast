@@ -57,4 +57,18 @@ public class UserService {
         return findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    /**
+     * Update user avatar information
+     */
+    public void updateUserAvatar(String userId, String avatarUrl, String avatarFileKey) {
+        User user = findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setProfilePictureUrl(avatarUrl);
+        user.setAvatarFileKey(avatarFileKey);
+
+        save(user);
+        log.info("Updated avatar for user: {}", userId);
+    }
 }
